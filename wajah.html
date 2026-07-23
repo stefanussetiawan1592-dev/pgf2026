@@ -1,0 +1,1015 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Webcam Fisika · Face Detection + Blink Counter</title>
+    <!-- Google Fonts & Font Awesome -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- MediaPipe CSS -->
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: radial-gradient(ellipse at 20% 30%, #0a1628, #0b1a2e, #0f1f33);
+            font-family: 'Inter', sans-serif;
+            padding: 1.5rem;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Animasi partikel latar belakang */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(2px 2px at 20% 30%, rgba(255,255,255,0.3), transparent),
+                radial-gradient(2px 2px at 40% 70%, rgba(255,255,255,0.2), transparent),
+                radial-gradient(2px 2px at 60% 20%, rgba(255,255,255,0.3), transparent),
+                radial-gradient(2px 2px at 80% 80%, rgba(255,255,255,0.2), transparent),
+                radial-gradient(1px 1px at 10% 90%, rgba(255,255,255,0.4), transparent),
+                radial-gradient(1px 1px at 90% 10%, rgba(255,255,255,0.4), transparent),
+                radial-gradient(1px 1px at 50% 50%, rgba(255,255,255,0.1), transparent);
+            background-size: 200px 200px;
+            pointer-events: none;
+            z-index: 0;
+            animation: twinkle 4s ease-in-out infinite alternate;
+        }
+
+        @keyframes twinkle {
+            0% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        /* Orb dekoratif */
+        .orb {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(80px);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .orb-1 {
+            width: 400px;
+            height: 400px;
+            top: -100px;
+            right: -100px;
+            background: radial-gradient(circle, rgba(31, 109, 169, 0.15), transparent 70%);
+            animation: floatOrb 8s ease-in-out infinite alternate;
+        }
+
+        .orb-2 {
+            width: 300px;
+            height: 300px;
+            bottom: -50px;
+            left: -50px;
+            background: radial-gradient(circle, rgba(100, 180, 255, 0.1), transparent 70%);
+            animation: floatOrb 10s ease-in-out infinite alternate-reverse;
+        }
+
+        @keyframes floatOrb {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(30px, 30px) scale(1.1); }
+        }
+
+        .main-container {
+            max-width: 1200px;
+            width: 100%;
+            position: relative;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        /* Header */
+        .header-section {
+            text-align: center;
+            color: white;
+            padding: 0.5rem 0;
+        }
+
+        .header-section .badge {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(10px);
+            padding: 0.3rem 1.8rem;
+            border-radius: 40px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 2px;
+            color: rgba(255, 255, 255, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 0.8rem;
+            text-transform: uppercase;
+        }
+
+        .header-section h1 {
+            font-size: 2.8rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #ffffff 0%, #7f9fc7 50%, #4a7a9c 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.3rem;
+        }
+
+        .header-section .subtitle {
+            font-size: 1.1rem;
+            color: rgba(255, 255, 255, 0.6);
+            font-weight: 300;
+            letter-spacing: 1px;
+        }
+
+        .header-section .subtitle i {
+            margin: 0 8px;
+            color: #4a7a9c;
+        }
+
+        /* Webcam Card */
+        .webcam-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 2.5rem;
+            padding: 1.8rem 1.8rem 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .webcam-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 40px 100px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+        }
+
+        .webcam-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.2rem;
+            padding: 0 0.5rem;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .webcam-header .left {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .webcam-header .left .indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.85rem;
+        }
+
+        .webcam-header .left .indicator .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            display: inline-block;
+            transition: all 0.3s;
+        }
+
+        .dot.active {
+            background: #2ecc71;
+            box-shadow: 0 0 20px rgba(46, 204, 113, 0.5);
+            animation: pulse-dot 1.5s infinite;
+        }
+
+        .dot.inactive {
+            background: #e74c3c;
+            box-shadow: 0 0 20px rgba(231, 76, 60, 0.3);
+        }
+
+        .dot.loading {
+            background: #f39c12;
+            box-shadow: 0 0 20px rgba(243, 156, 18, 0.3);
+            animation: pulse-dot 0.8s infinite;
+        }
+
+        @keyframes pulse-dot {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.4; transform: scale(0.8); }
+        }
+
+        .webcam-header .right {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .webcam-header .right .cam-label {
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.4);
+            background: rgba(255, 255, 255, 0.05);
+            padding: 4px 14px;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        /* Tombol kontrol */
+        .btn-cam {
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.8);
+            padding: 8px 18px;
+            border-radius: 40px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 500;
+        }
+
+        .btn-cam:hover {
+            background: rgba(255, 255, 255, 0.12);
+            border-color: rgba(255, 255, 255, 0.2);
+            transform: scale(1.02);
+        }
+
+        .btn-cam.danger:hover {
+            background: rgba(231, 76, 60, 0.3);
+            border-color: rgba(231, 76, 60, 0.4);
+        }
+
+        .btn-cam.success:hover {
+            background: rgba(46, 204, 113, 0.2);
+            border-color: rgba(46, 204, 113, 0.3);
+        }
+
+        .btn-cam:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        /* Video wrapper */
+        .video-wrapper {
+            position: relative;
+            border-radius: 1.8rem;
+            overflow: hidden;
+            background: #0a1628;
+            aspect-ratio: 16/9;
+            min-height: 450px;
+            box-shadow: inset 0 0 60px rgba(0, 0, 0, 0.5);
+        }
+
+        .video-wrapper::before {
+            content: '';
+            position: absolute;
+            inset: -2px;
+            border-radius: 1.8rem;
+            padding: 2px;
+            background: linear-gradient(135deg, rgba(31, 109, 169, 0.3), rgba(127, 159, 199, 0.1), rgba(31, 109, 169, 0.3));
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        .video-wrapper video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            position: relative;
+            z-index: 1;
+            background: #0a1628;
+        }
+
+        .video-wrapper canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 2;
+            pointer-events: none;
+        }
+
+        .video-wrapper .placeholder {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: rgba(255, 255, 255, 0.4);
+            z-index: 0;
+            gap: 16px;
+            background: radial-gradient(circle at center, rgba(10, 22, 40, 0.8), #0a1628);
+        }
+
+        .video-wrapper .placeholder i {
+            font-size: 4rem;
+            opacity: 0.5;
+        }
+
+        .video-wrapper .placeholder p {
+            font-size: 1rem;
+            opacity: 0.6;
+            max-width: 300px;
+            text-align: center;
+        }
+
+        .video-wrapper .overlay-text {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(10px);
+            padding: 6px 20px;
+            border-radius: 30px;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.75rem;
+            letter-spacing: 1px;
+            z-index: 3;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            display: none;
+        }
+
+        .video-wrapper .overlay-text.show {
+            display: block;
+        }
+
+        /* Blink Counter & Info */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 12px;
+            margin-top: 1.2rem;
+            padding: 0 0.5rem;
+        }
+
+        .stat-item {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 14px 18px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .stat-item:hover {
+            background: rgba(255, 255, 255, 0.06);
+            border-color: rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .stat-item .icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            background: rgba(31, 109, 169, 0.15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #7f9fc7;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+
+        .stat-item .info {
+            flex: 1;
+        }
+
+        .stat-item .info .label {
+            font-size: 0.65rem;
+            color: rgba(255, 255, 255, 0.4);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .stat-item .info .value {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: rgba(255, 255, 255, 0.95);
+            line-height: 1.2;
+        }
+
+        .stat-item .info .value.blink-count {
+            color: #2ecc71;
+            font-size: 1.8rem;
+        }
+
+        .stat-item .info .value.blink-rate {
+            color: #f39c12;
+        }
+
+        /* Footer */
+        .footer-section {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.2);
+            font-size: 0.8rem;
+            padding: 0.5rem 0;
+            letter-spacing: 0.5px;
+        }
+
+        .footer-section i {
+            margin: 0 6px;
+            color: rgba(255, 255, 255, 0.1);
+        }
+
+        /* Responsif */
+        @media (max-width: 768px) {
+            .header-section h1 {
+                font-size: 2.2rem;
+            }
+            .header-section .subtitle {
+                font-size: 0.95rem;
+            }
+            .webcam-card {
+                padding: 1.2rem;
+                border-radius: 2rem;
+            }
+            .video-wrapper {
+                min-height: 300px;
+            }
+            .stats-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header-section h1 {
+                font-size: 1.6rem;
+            }
+            .webcam-header {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 8px;
+            }
+            .webcam-header .right {
+                justify-content: flex-start;
+            }
+            .video-wrapper {
+                min-height: 250px;
+            }
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Orb dekoratif -->
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+
+    <div class="main-container">
+        <!-- Header -->
+        <div class="header-section">
+            <div class="badge">
+                <i class="fas fa-atom"></i> LAB FISIKA DIGITAL · FACE MESH
+            </div>
+            <h1>Webcam Studio Pro</h1>
+            <div class="subtitle">
+                <i class="fas fa-arrow-right"></i>
+                Stefanus Setiawan · Guru Fisika · Face Detection + Blink Counter
+                <i class="fas fa-arrow-left"></i>
+            </div>
+        </div>
+
+        <!-- Webcam Card -->
+        <div class="webcam-card">
+            <div class="webcam-header">
+                <div class="left">
+                    <div class="indicator">
+                        <span class="dot inactive" id="statusDot"></span>
+                        <span id="statusText">Kamera tidak aktif</span>
+                    </div>
+                </div>
+                <div class="right">
+                    <span class="cam-label">
+                        <i class="fas fa-camera"></i> Webcam
+                    </span>
+                    <button class="btn-cam success" id="toggleBtn">
+                        <i class="fas fa-play"></i> Mulai
+                    </button>
+                    <button class="btn-cam" id="resetBtn">
+                        <i class="fas fa-redo"></i> Reset
+                    </button>
+                </div>
+            </div>
+
+            <div class="video-wrapper" id="videoWrapper">
+                <video id="videoElement" autoplay playsinline></video>
+                <canvas id="overlayCanvas"></canvas>
+                <div class="placeholder" id="placeholder">
+                    <i class="fas fa-video-slash"></i>
+                    <p>Klik "Mulai" untuk mengaktifkan kamera</p>
+                </div>
+                <div class="overlay-text" id="overlayText">
+                    <i class="fas fa-circle" style="color: #2ecc71; font-size: 0.5rem;"></i> LIVE · Face Mesh Active
+                </div>
+            </div>
+
+            <!-- Stats Grid -->
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="icon"><i class="fas fa-eye"></i></div>
+                    <div class="info">
+                        <div class="label">Total Kedipan</div>
+                        <div class="value blink-count" id="blinkCount">0</div>
+                    </div>
+                </div>
+                <div class="stat-item">
+                    <div class="icon"><i class="fas fa-clock"></i></div>
+                    <div class="info">
+                        <div class="label">Kedipan per Menit</div>
+                        <div class="value blink-rate" id="blinkRate">0</div>
+                    </div>
+                </div>
+                <div class="stat-item">
+                    <div class="icon"><i class="fas fa-face-smile"></i></div>
+                    <div class="info">
+                        <div class="label">Status Wajah</div>
+                        <div class="value" id="faceStatus">Tidak Terdeteksi</div>
+                    </div>
+                </div>
+                <div class="stat-item">
+                    <div class="icon"><i class="fas fa-microscope"></i></div>
+                    <div class="info">
+                        <div class="label">Resolusi</div>
+                        <div class="value" id="resolution">-</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer-section">
+            <i class="fas fa-atom"></i>
+            <span>© 2026 · Stefanus Setiawan · Fisika Santa Laurensia</span>
+            <i class="fas fa-atom"></i>
+        </div>
+    </div>
+
+    <!-- MediaPipe Dependencies -->
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/face_mesh.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js" crossorigin="anonymous"></script>
+
+    <script>
+        (function() {
+            'use strict';
+
+            // --- DOM Elements ---
+            const video = document.getElementById('videoElement');
+            const canvas = document.getElementById('overlayCanvas');
+            const ctx = canvas.getContext('2d');
+            const statusDot = document.getElementById('statusDot');
+            const statusText = document.getElementById('statusText');
+            const placeholder = document.getElementById('placeholder');
+            const overlayText = document.getElementById('overlayText');
+            const toggleBtn = document.getElementById('toggleBtn');
+            const resetBtn = document.getElementById('resetBtn');
+            const blinkCountEl = document.getElementById('blinkCount');
+            const blinkRateEl = document.getElementById('blinkRate');
+            const faceStatusEl = document.getElementById('faceStatus');
+            const resolutionEl = document.getElementById('resolution');
+
+            // --- State ---
+            let stream = null;
+            let isActive = false;
+            let faceMesh = null;
+            let camera = null;
+
+            // Blink detection variables
+            let blinkCounter = 0;
+            let blinkStartTime = Date.now();
+            let blinkHistory = [];
+            let isBlinking = false;
+            let blinkFrameCount = 0;
+            const BLINK_THRESHOLD = 0.018; // EAR threshold for blink detection
+            const BLINK_FRAMES = 3; // Minimum frames for a blink
+
+            // EAR (Eye Aspect Ratio) indices
+            const LEFT_EYE_INDICES = [33, 133, 160, 158, 153, 144];
+            const RIGHT_EYE_INDICES = [362, 263, 387, 385, 380, 373];
+
+            // --- Canvas setup ---
+            function resizeCanvas() {
+                const wrapper = document.getElementById('videoWrapper');
+                const rect = wrapper.getBoundingClientRect();
+                canvas.width = rect.width;
+                canvas.height = rect.height;
+            }
+
+            window.addEventListener('resize', resizeCanvas);
+
+            // --- Utility: Calculate distance between two points ---
+            function distance(p1, p2) {
+                return Math.sqrt((p1.x - p2.x) ** 2 + (p1.y - p2.y) ** 2);
+            }
+
+            // --- Calculate EAR (Eye Aspect Ratio) ---
+            function calculateEAR(landmarks, eyeIndices) {
+                const p1 = landmarks[eyeIndices[0]];
+                const p2 = landmarks[eyeIndices[1]];
+                const p3 = landmarks[eyeIndices[2]];
+                const p4 = landmarks[eyeIndices[3]];
+                const p5 = landmarks[eyeIndices[4]];
+                const p6 = landmarks[eyeIndices[5]];
+
+                const vertical1 = distance(p2, p6);
+                const vertical2 = distance(p3, p5);
+                const horizontal = distance(p1, p4);
+
+                return (vertical1 + vertical2) / (2.0 * horizontal);
+            }
+
+            // --- Update blink statistics ---
+            function updateBlinkStats() {
+                const now = Date.now();
+                const elapsedMinutes = (now - blinkStartTime) / 60000;
+                
+                if (elapsedMinutes > 0) {
+                    const rate = Math.round(blinkCounter / elapsedMinutes);
+                    blinkRateEl.textContent = rate;
+                } else {
+                    blinkRateEl.textContent = '0';
+                }
+
+                blinkCountEl.textContent = blinkCounter;
+            }
+
+            // --- Reset blink counter ---
+            function resetBlinkCounter() {
+                blinkCounter = 0;
+                blinkHistory = [];
+                blinkStartTime = Date.now();
+                isBlinking = false;
+                blinkFrameCount = 0;
+                blinkCountEl.textContent = '0';
+                blinkRateEl.textContent = '0';
+                console.log('🔄 Blink counter reset');
+            }
+
+            // --- Process face landmarks for blink detection ---
+            function processLandmarks(landmarks) {
+                if (!landmarks || landmarks.length === 0) {
+                    faceStatusEl.textContent = 'Tidak Terdeteksi';
+                    faceStatusEl.style.color = '#e74c3c';
+                    return;
+                }
+
+                // Face detected
+                faceStatusEl.textContent = '✓ Terdeteksi';
+                faceStatusEl.style.color = '#2ecc71';
+
+                // Calculate EAR for both eyes
+                const leftEAR = calculateEAR(landmarks, LEFT_EYE_INDICES);
+                const rightEAR = calculateEAR(landmarks, RIGHT_EYE_INDICES);
+                const avgEAR = (leftEAR + rightEAR) / 2;
+
+                // Blink detection
+                if (avgEAR < BLINK_THRESHOLD) {
+                    blinkFrameCount++;
+                    if (!isBlinking && blinkFrameCount > BLINK_FRAMES) {
+                        isBlinking = true;
+                        blinkCounter++;
+                        blinkHistory.push(Date.now());
+                        
+                        // Keep only last 60 seconds of history
+                        const cutoff = Date.now() - 60000;
+                        blinkHistory = blinkHistory.filter(t => t > cutoff);
+                        
+                        updateBlinkStats();
+                        console.log('👁️ Blink detected! Total:', blinkCounter);
+                    }
+                } else {
+                    if (isBlinking) {
+                        isBlinking = false;
+                        blinkFrameCount = 0;
+                    } else {
+                        blinkFrameCount = Math.max(0, blinkFrameCount - 1);
+                    }
+                }
+            }
+
+            // --- Draw face mesh landmarks on canvas ---
+            function drawFaceMesh(landmarks) {
+                const canvasWidth = canvas.width;
+                const canvasHeight = canvas.height;
+                const videoWidth = video.videoWidth || canvasWidth;
+                const videoHeight = video.videoHeight || canvasHeight;
+
+                // Clear canvas
+                ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+
+                if (!landmarks || landmarks.length === 0) {
+                    return;
+                }
+
+                // Scale factors
+                const scaleX = canvasWidth / videoWidth;
+                const scaleY = canvasHeight / videoHeight;
+
+                // Draw face mesh points
+                ctx.fillStyle = 'rgba(46, 204, 113, 0.6)';
+                ctx.strokeStyle = 'rgba(46, 204, 113, 0.3)';
+                ctx.lineWidth = 1;
+
+                // Draw all landmarks
+                for (let i = 0; i < landmarks.length; i++) {
+                    const x = landmarks[i].x * canvasWidth;
+                    const y = landmarks[i].y * canvasHeight;
+                    
+                    // Draw point
+                    ctx.beginPath();
+                    ctx.arc(x, y, 1.5, 0, Math.PI * 2);
+                    ctx.fill();
+
+                    // Draw connections (simplified - just some key connections)
+                    if (i % 3 === 0) {
+                        ctx.fillStyle = 'rgba(46, 204, 113, 0.8)';
+                    } else {
+                        ctx.fillStyle = 'rgba(46, 204, 113, 0.4)';
+                    }
+                }
+
+                // Highlight eyes
+                ctx.strokeStyle = 'rgba(52, 152, 219, 0.7)';
+                ctx.lineWidth = 2;
+                
+                // Draw eye landmarks
+                const drawEye = (indices, color) => {
+                    ctx.strokeStyle = color;
+                    ctx.beginPath();
+                    for (let i = 0; i < indices.length; i++) {
+                        const idx = indices[i];
+                        if (idx < landmarks.length) {
+                            const x = landmarks[idx].x * canvasWidth;
+                            const y = landmarks[idx].y * canvasHeight;
+                            if (i === 0) {
+                                ctx.moveTo(x, y);
+                            } else {
+                                ctx.lineTo(x, y);
+                            }
+                        }
+                    }
+                    ctx.closePath();
+                    ctx.stroke();
+                };
+
+                drawEye(LEFT_EYE_INDICES, 'rgba(52, 152, 219, 0.7)');
+                drawEye(RIGHT_EYE_INDICES, 'rgba(52, 152, 219, 0.7)');
+
+                // Draw blink indicator if blinking
+                if (isBlinking) {
+                    ctx.fillStyle = 'rgba(231, 76, 60, 0.15)';
+                    ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+                    ctx.fillStyle = 'rgba(231, 76, 60, 0.8)';
+                    ctx.font = '20px Inter, sans-serif';
+                    ctx.textAlign = 'center';
+                    ctx.fillText('👁️ BLINK!', canvasWidth / 2, 50);
+                }
+
+                // Draw info on canvas
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
+                ctx.font = '14px Inter, sans-serif';
+                ctx.textAlign = 'left';
+                ctx.fillText(`Faces: ${landmarks.length > 0 ? '1' : '0'}`, 15, 30);
+                ctx.fillText(`Blink: ${blinkCounter}`, 15, 55);
+            }
+
+            // --- Initialize Face Mesh ---
+            function initFaceMesh() {
+                faceMesh = new FaceMesh({
+                    locateFile: (file) => {
+                        return `https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/${file}`;
+                    }
+                });
+
+                faceMesh.setOptions({
+                    maxNumFaces: 1,
+                    refineLandmarks: true,
+                    minDetectionConfidence: 0.5,
+                    minTrackingConfidence: 0.5
+                });
+
+                faceMesh.onResults((results) => {
+                    if (results.multiFaceLandmarks && results.multiFaceLandmarks.length > 0) {
+                        const landmarks = results.multiFaceLandmarks[0];
+                        processLandmarks(landmarks);
+                        drawFaceMesh(landmarks);
+                    } else {
+                        // No face detected
+                        faceStatusEl.textContent = 'Tidak Terdeteksi';
+                        faceStatusEl.style.color = '#e74c3c';
+                        ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    }
+                });
+
+                console.log('🧬 Face Mesh initialized');
+            }
+
+            // --- Start Camera with MediaPipe ---
+            async function startCamera() {
+                try {
+                    setStatus('loading', 'Mengakses kamera...');
+
+                    const constraints = {
+                        video: {
+                            facingMode: 'user',
+                            width: { ideal: 640 },
+                            height: { ideal: 480 },
+                            frameRate: { ideal: 30 }
+                        },
+                        audio: false
+                    };
+
+                    stream = await navigator.mediaDevices.getUserMedia(constraints);
+                    video.srcObject = stream;
+
+                    // Wait for video to be ready
+                    await video.play();
+
+                    // Set canvas size
+                    resizeCanvas();
+
+                    // Get video info
+                    const settings = stream.getVideoTracks()[0].getSettings();
+                    resolutionEl.textContent = `${settings.width || '640'} × ${settings.height || '480'}`;
+
+                    // Initialize Face Mesh if not already
+                    if (!faceMesh) {
+                        initFaceMesh();
+                    }
+
+                    // Initialize Camera with MediaPipe
+                    camera = new Camera(video, {
+                        onFrame: async () => {
+                            try {
+                                await faceMesh.send({ image: video });
+                            } catch (error) {
+                                // Silent error handling for frame processing
+                            }
+                        },
+                        width: 640,
+                        height: 480
+                    });
+
+                    await camera.start();
+
+                    isActive = true;
+                    setStatus('active', 'Kamera & Face Mesh aktif');
+                    
+                    // Reset blink counter when starting
+                    resetBlinkCounter();
+
+                    console.log('📷 Kamera berhasil diaktifkan dengan Face Mesh');
+                    console.log('📐 Resolusi:', settings.width, 'x', settings.height);
+
+                } catch (error) {
+                    console.error('❌ Error mengakses kamera:', error);
+                    
+                    let errorMsg = 'Gagal mengakses kamera. ';
+                    if (error.name === 'NotAllowedError' || error.name === 'PermissionDeniedError') {
+                        errorMsg += 'Perizinan kamera ditolak. Silakan izinkan akses kamera di browser.';
+                    } else if (error.name === 'NotFoundError' || error.name === 'DevicesNotFoundError') {
+                        errorMsg += 'Tidak ditemukan kamera. Pastikan kamera terhubung.';
+                    } else if (error.name === 'NotReadableError' || error.name === 'TrackStartError') {
+                        errorMsg += 'Kamera sedang digunakan oleh aplikasi lain.';
+                    } else {
+                        errorMsg += error.message || 'Terjadi kesalahan tidak dikenal.';
+                    }
+
+                    setStatus('inactive', errorMsg);
+                    stopCamera();
+                }
+            }
+
+            // --- Stop Camera ---
+            function stopCamera() {
+                if (camera) {
+                    camera.stop();
+                    camera = null;
+                }
+
+                if (stream) {
+                    stream.getTracks().forEach(track => track.stop());
+                    stream = null;
+                }
+
+                video.srcObject = null;
+                isActive = false;
+
+                // Clear canvas
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                // Reset status
+                faceStatusEl.textContent = 'Tidak Aktif';
+                faceStatusEl.style.color = '#e74c3c';
+                resolutionEl.textContent = '-';
+
+                setStatus('inactive', 'Kamera dihentikan');
+                console.log('📷 Kamera dihentikan');
+            }
+
+            // --- Toggle Camera ---
+            function toggleCamera() {
+                if (isActive) {
+                    stopCamera();
+                } else {
+                    startCamera();
+                }
+            }
+
+            // --- Update Status UI ---
+            function setStatus(state, message) {
+                statusDot.className = 'dot';
+                if (state === 'active') {
+                    statusDot.classList.add('active');
+                    statusText.textContent = message || 'Kamera & Face Mesh aktif';
+                    overlayText.classList.add('show');
+                    placeholder.style.display = 'none';
+                    toggleBtn.innerHTML = '<i class="fas fa-stop"></i> Hentikan';
+                    toggleBtn.className = 'btn-cam danger';
+                } else if (state === 'loading') {
+                    statusDot.classList.add('loading');
+                    statusText.textContent = message || 'Memulai kamera...';
+                    overlayText.classList.remove('show');
+                    toggleBtn.disabled = true;
+                } else {
+                    statusDot.classList.add('inactive');
+                    statusText.textContent = message || 'Kamera tidak aktif';
+                    overlayText.classList.remove('show');
+                    placeholder.style.display = 'flex';
+                    toggleBtn.innerHTML = '<i class="fas fa-play"></i> Mulai';
+                    toggleBtn.className = 'btn-cam success';
+                    toggleBtn.disabled = false;
+                }
+            }
+
+            // --- Event Listeners ---
+            toggleBtn.addEventListener('click', toggleCamera);
+            resetBtn.addEventListener('click', resetBlinkCounter);
+
+            // Keyboard shortcuts
+            document.addEventListener('keydown', (e) => {
+                if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+                
+                if (e.key === ' ' || e.key === 'Space') {
+                    e.preventDefault();
+                    toggleCamera();
+                } else if (e.key === 'r' || e.key === 'R') {
+                    e.preventDefault();
+                    resetBlinkCounter();
+                }
+            });
+
+            // --- Initialize ---
+            setStatus('inactive', 'Klik "Mulai" untuk mengaktifkan kamera');
+
+            // Check browser support
+            if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                setStatus('inactive', 'Browser tidak mendukung kamera');
+                toggleBtn.disabled = true;
+                console.error('❌ Browser tidak mendukung getUserMedia');
+            }
+
+            // Update blink rate periodically
+            setInterval(updateBlinkStats, 1000);
+
+            console.log('🎥 Webcam Fisika dengan Face Mesh siap digunakan');
+            console.log('📌 Shortcut: [Space] toggle kamera, [R] reset counter');
+            console.log('👁️ Blink detection aktif!');
+            console.log('🔬 Tema Fisika by Stefanus Setiawan');
+
+        })();
+    </script>
+</body>
+</html>
