@@ -3,18 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Webcam Fisika · Face Detection + Expression Analysis</title>
-    <!-- Google Fonts & Font Awesome -->
+    <title>Webcam Fisika · Face Analysis Pro</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
             min-height: 100vh;
@@ -61,24 +56,8 @@
             pointer-events: none;
             z-index: 0;
         }
-
-        .orb-1 {
-            width: 400px;
-            height: 400px;
-            top: -100px;
-            right: -100px;
-            background: radial-gradient(circle, rgba(31, 109, 169, 0.15), transparent 70%);
-            animation: floatOrb 8s ease-in-out infinite alternate;
-        }
-
-        .orb-2 {
-            width: 300px;
-            height: 300px;
-            bottom: -50px;
-            left: -50px;
-            background: radial-gradient(circle, rgba(100, 180, 255, 0.1), transparent 70%);
-            animation: floatOrb 10s ease-in-out infinite alternate-reverse;
-        }
+        .orb-1 { width: 400px; height: 400px; top: -100px; right: -100px; background: radial-gradient(circle, rgba(31, 109, 169, 0.15), transparent 70%); animation: floatOrb 8s ease-in-out infinite alternate; }
+        .orb-2 { width: 300px; height: 300px; bottom: -50px; left: -50px; background: radial-gradient(circle, rgba(100, 180, 255, 0.1), transparent 70%); animation: floatOrb 10s ease-in-out infinite alternate-reverse; }
 
         @keyframes floatOrb {
             0% { transform: translate(0, 0) scale(1); }
@@ -133,11 +112,6 @@
             letter-spacing: 1px;
         }
 
-        .header-section .subtitle i {
-            margin: 0 8px;
-            color: #4a7a9c;
-        }
-
         .webcam-card {
             background: rgba(255, 255, 255, 0.05);
             backdrop-filter: blur(20px);
@@ -186,22 +160,9 @@
             transition: all 0.3s;
         }
 
-        .dot.active {
-            background: #2ecc71;
-            box-shadow: 0 0 20px rgba(46, 204, 113, 0.5);
-            animation: pulse-dot 1.5s infinite;
-        }
-
-        .dot.inactive {
-            background: #e74c3c;
-            box-shadow: 0 0 20px rgba(231, 76, 60, 0.3);
-        }
-
-        .dot.loading {
-            background: #f39c12;
-            box-shadow: 0 0 20px rgba(243, 156, 18, 0.3);
-            animation: pulse-dot 0.8s infinite;
-        }
+        .dot.active { background: #2ecc71; box-shadow: 0 0 20px rgba(46, 204, 113, 0.5); animation: pulse-dot 1.5s infinite; }
+        .dot.inactive { background: #e74c3c; box-shadow: 0 0 20px rgba(231, 76, 60, 0.3); }
+        .dot.loading { background: #f39c12; box-shadow: 0 0 20px rgba(243, 156, 18, 0.3); animation: pulse-dot 0.8s infinite; }
 
         @keyframes pulse-dot {
             0%, 100% { opacity: 1; transform: scale(1); }
@@ -239,27 +200,10 @@
             font-weight: 500;
         }
 
-        .btn-cam:hover {
-            background: rgba(255, 255, 255, 0.12);
-            border-color: rgba(255, 255, 255, 0.2);
-            transform: scale(1.02);
-        }
-
-        .btn-cam.danger:hover {
-            background: rgba(231, 76, 60, 0.3);
-            border-color: rgba(231, 76, 60, 0.4);
-        }
-
-        .btn-cam.success:hover {
-            background: rgba(46, 204, 113, 0.2);
-            border-color: rgba(46, 204, 113, 0.3);
-        }
-
-        .btn-cam:disabled {
-            opacity: 0.4;
-            cursor: not-allowed;
-            transform: none !important;
-        }
+        .btn-cam:hover { background: rgba(255, 255, 255, 0.12); border-color: rgba(255, 255, 255, 0.2); transform: scale(1.02); }
+        .btn-cam.danger:hover { background: rgba(231, 76, 60, 0.3); border-color: rgba(231, 76, 60, 0.4); }
+        .btn-cam.success:hover { background: rgba(46, 204, 113, 0.2); border-color: rgba(46, 204, 113, 0.3); }
+        .btn-cam:disabled { opacity: 0.4; cursor: not-allowed; transform: none !important; }
 
         .video-wrapper {
             position: relative;
@@ -321,17 +265,8 @@
             background: radial-gradient(circle at center, rgba(10, 22, 40, 0.8), #0a1628);
         }
 
-        .video-wrapper .placeholder i {
-            font-size: 4rem;
-            opacity: 0.5;
-        }
-
-        .video-wrapper .placeholder p {
-            font-size: 1rem;
-            opacity: 0.6;
-            max-width: 300px;
-            text-align: center;
-        }
+        .video-wrapper .placeholder i { font-size: 4rem; opacity: 0.5; }
+        .video-wrapper .placeholder p { font-size: 1rem; opacity: 0.6; max-width: 300px; text-align: center; }
 
         .video-wrapper .overlay-text {
             position: absolute;
@@ -350,14 +285,44 @@
             display: none;
         }
 
-        .video-wrapper .overlay-text.show {
-            display: block;
+        .video-wrapper .overlay-text.show { display: block; }
+
+        /* Blink Notification */
+        .blink-notification {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 4;
+            font-size: 4rem;
+            font-weight: 800;
+            color: #2ecc71;
+            text-shadow: 0 0 40px rgba(46, 204, 113, 0.5);
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.3s ease;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 20px 40px;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(46, 204, 113, 0.3);
         }
 
-        /* Stats Grid */
+        .blink-notification.show {
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1.1);
+            animation: blinkPop 0.6s ease-out;
+        }
+
+        @keyframes blinkPop {
+            0% { transform: translate(-50%, -50%) scale(0.5); opacity: 0; }
+            50% { transform: translate(-50%, -50%) scale(1.2); opacity: 1; }
+            100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+        }
+
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
             gap: 12px;
             margin-top: 1.2rem;
             padding: 0 0.5rem;
@@ -420,21 +385,9 @@
             font-size: 1.4rem;
         }
 
-        .stat-item .info .value.expression {
-            font-size: 1rem;
-        }
-
-        .stat-item .info .value.expression.happy {
-            color: #f1c40f;
-        }
-
-        .stat-item .info .value.expression.angry {
-            color: #e74c3c;
-        }
-
-        .stat-item .info .value.expression.neutral {
-            color: #7f9fc7;
-        }
+        .stat-item .info .value.expression.happy { color: #f1c40f; }
+        .stat-item .info .value.expression.angry { color: #e74c3c; }
+        .stat-item .info .value.expression.neutral { color: #7f9fc7; }
 
         .footer-section {
             text-align: center;
@@ -444,48 +397,24 @@
             letter-spacing: 0.5px;
         }
 
-        .footer-section i {
-            margin: 0 6px;
-            color: rgba(255, 255, 255, 0.1);
-        }
+        .footer-section i { margin: 0 6px; color: rgba(255, 255, 255, 0.1); }
 
         @media (max-width: 768px) {
-            .header-section h1 {
-                font-size: 2.2rem;
-            }
-            .header-section .subtitle {
-                font-size: 0.95rem;
-            }
-            .webcam-card {
-                padding: 1.2rem;
-                border-radius: 2rem;
-            }
-            .video-wrapper {
-                min-height: 300px;
-            }
-            .stats-grid {
-                grid-template-columns: 1fr 1fr;
-            }
+            .header-section h1 { font-size: 2.2rem; }
+            .header-section .subtitle { font-size: 0.95rem; }
+            .webcam-card { padding: 1.2rem; border-radius: 2rem; }
+            .video-wrapper { min-height: 300px; }
+            .stats-grid { grid-template-columns: 1fr 1fr; }
+            .blink-notification { font-size: 2.5rem; padding: 15px 25px; }
         }
 
         @media (max-width: 480px) {
-            .header-section h1 {
-                font-size: 1.6rem;
-            }
-            .webcam-header {
-                flex-direction: column;
-                align-items: stretch;
-                gap: 8px;
-            }
-            .webcam-header .right {
-                justify-content: flex-start;
-            }
-            .video-wrapper {
-                min-height: 250px;
-            }
-            .stats-grid {
-                grid-template-columns: 1fr;
-            }
+            .header-section h1 { font-size: 1.6rem; }
+            .webcam-header { flex-direction: column; align-items: stretch; gap: 8px; }
+            .webcam-header .right { justify-content: flex-start; }
+            .video-wrapper { min-height: 250px; }
+            .stats-grid { grid-template-columns: 1fr; }
+            .blink-notification { font-size: 1.8rem; padding: 10px 20px; }
         }
     </style>
 </head>
@@ -495,9 +424,7 @@
 
     <div class="main-container">
         <div class="header-section">
-            <div class="badge">
-                <i class="fas fa-atom"></i> LAB FISIKA DIGITAL · FACE ANALYSIS
-            </div>
+            <div class="badge"><i class="fas fa-atom"></i> LAB FISIKA DIGITAL · FACE ANALYSIS PRO</div>
             <h1>Webcam Studio Pro</h1>
             <div class="subtitle">
                 <i class="fas fa-arrow-right"></i>
@@ -515,21 +442,16 @@
                     </div>
                 </div>
                 <div class="right">
-                    <span class="cam-label">
-                        <i class="fas fa-camera"></i> Webcam
-                    </span>
-                    <button class="btn-cam success" id="toggleBtn">
-                        <i class="fas fa-play"></i> Mulai
-                    </button>
-                    <button class="btn-cam" id="resetBtn">
-                        <i class="fas fa-redo"></i> Reset
-                    </button>
+                    <span class="cam-label"><i class="fas fa-camera"></i> Webcam</span>
+                    <button class="btn-cam success" id="toggleBtn"><i class="fas fa-play"></i> Mulai</button>
+                    <button class="btn-cam" id="resetBtn"><i class="fas fa-redo"></i> Reset</button>
                 </div>
             </div>
 
             <div class="video-wrapper" id="videoWrapper">
                 <video id="videoElement" autoplay playsinline></video>
                 <canvas id="overlayCanvas"></canvas>
+                <div class="blink-notification" id="blinkNotification">👁️ BLINK!</div>
                 <div class="placeholder" id="placeholder">
                     <i class="fas fa-video-slash"></i>
                     <p>Klik "Mulai" untuk mengaktifkan kamera</p>
@@ -551,7 +473,7 @@
                     <div class="icon"><i class="fas fa-clock"></i></div>
                     <div class="info">
                         <div class="label">Kedipan / Menit</div>
-                        <div class="value blink-rate" id="blinkRate">0</div>
+                        <div class="value" id="blinkRate" style="color:#f39c12;">0</div>
                     </div>
                 </div>
                 <div class="stat-item">
@@ -617,6 +539,7 @@
             const smileStatusEl = document.getElementById('smileStatus');
             const angryStatusEl = document.getElementById('angryStatus');
             const faceStatusEl = document.getElementById('faceStatus');
+            const blinkNotification = document.getElementById('blinkNotification');
 
             // --- State ---
             let stream = null;
@@ -631,26 +554,27 @@
             let isBlinking = false;
             let blinkFrameCount = 0;
             let lastBlinkTime = 0;
-            const BLINK_THRESHOLD = 0.025;
+            const BLINK_THRESHOLD = 0.022;
             const BLINK_FRAMES = 2;
 
             // Expression variables
             let smileIntensity = 0;
             let angryIntensity = 0;
             let currentExpression = 'Netral';
-            let expressionHistory = [];
 
             // EAR indices
             const LEFT_EYE_INDICES = [33, 133, 160, 158, 153, 144];
             const RIGHT_EYE_INDICES = [362, 263, 387, 385, 380, 373];
 
-            // Mouth indices for smile detection
-            const MOUTH_LEFT = [61, 146, 91, 181, 84, 17, 314, 405, 321, 375, 291, 409, 270, 269, 267, 0, 37, 39, 40, 185];
-            const MOUTH_RIGHT = [291, 409, 270, 269, 267, 0, 37, 39, 40, 185, 61, 146, 91, 181, 84, 17, 314, 405, 321, 375];
-            const MOUTH_TOP = [13, 312, 311, 310, 415, 308, 324, 318, 402, 317, 14, 87, 178, 88, 95];
-            const MOUTH_BOTTOM = [14, 87, 178, 88, 95, 78, 191, 80, 81, 82, 13, 312, 311, 310, 415, 308, 324, 318, 402, 317];
+            // MOUTH indices - lebih detail untuk deteksi senyum
+            const MOUTH_INDICES = [
+                61, 185, 40, 39, 37, 0, 267, 269, 270, 409,
+                291, 375, 321, 405, 314, 17, 84, 181, 91, 146,
+                78, 191, 80, 81, 82, 13, 312, 311, 310, 415,
+                308, 324, 318, 402, 317, 14, 87, 178, 88, 95
+            ];
 
-            // Brow indices for angry detection
+            // Brow indices for anger detection
             const LEFT_BROW = [55, 65, 52, 53, 46];
             const RIGHT_BROW = [285, 295, 282, 283, 276];
             const LEFT_EYE_TOP = [159, 158, 157, 173, 133];
@@ -663,10 +587,9 @@
                 canvas.width = rect.width;
                 canvas.height = rect.height;
             }
-
             window.addEventListener('resize', resizeCanvas);
 
-            // --- Utility: Calculate distance between two points ---
+            // --- Utility ---
             function distance(p1, p2) {
                 return Math.sqrt((p1.x - p2.x) ** 2 + (p1.y - p2.y) ** 2);
             }
@@ -688,47 +611,69 @@
                 return (vertical1 + vertical2) / (2.0 * horizontal);
             }
 
-            // --- Calculate mouth aspect ratio for smile detection ---
-            function calculateMouthRatio(landmarks) {
-                // Get mouth width and height
-                const mouthLeft = landmarks[61];
-                const mouthRight = landmarks[291];
-                const mouthTop = landmarks[13];
-                const mouthBottom = landmarks[14];
+            // --- Calculate smile intensity dengan lebih akurat ---
+            function calculateSmileIntensity(landmarks) {
+                // Gunakan titik mulut bagian atas dan bawah
+                const mouthTop = landmarks[13];  // titik atas mulut
+                const mouthBottom = landmarks[14]; // titik bawah mulut
+                const mouthLeft = landmarks[61]; // kiri mulut
+                const mouthRight = landmarks[291]; // kanan mulut
 
-                const width = distance(mouthLeft, mouthRight);
-                const height = distance(mouthTop, mouthBottom);
+                // Lebar mulut
+                const mouthWidth = distance(mouthLeft, mouthRight);
+                
+                // Tinggi mulut bagian tengah
+                const mouthHeight = distance(mouthTop, mouthBottom);
 
-                if (width === 0) return 0;
-                return height / width;
+                // Lebar mulut bagian kiri dan kanan (untuk deteksi senyum lebih akurat)
+                const leftCorner = landmarks[61];
+                const leftMid = landmarks[91];
+                const rightCorner = landmarks[291];
+                const rightMid = landmarks[321];
+
+                const leftWidth = distance(leftCorner, leftMid);
+                const rightWidth = distance(rightCorner, rightMid);
+
+                // Rasio tinggi/lebar mulut
+                const mouthRatio = mouthHeight / (mouthWidth + 0.001);
+
+                // Rasio asimetri mulut (senyum biasanya asimetris)
+                const asymmetry = Math.abs(leftWidth - rightWidth) / (mouthWidth + 0.001);
+
+                // Kombinasi untuk deteksi senyum yang lebih akurat
+                let smileScore = 0;
+
+                // Semakin tinggi mouthRatio, semakin besar senyum
+                if (mouthRatio > 0.35) {
+                    smileScore += (mouthRatio - 0.35) * 3;
+                }
+
+                // Asimetri juga indikasi senyum
+                if (asymmetry > 0.05) {
+                    smileScore += asymmetry * 2;
+                }
+
+                // Normalisasi ke 0-1
+                smileScore = Math.min(1, Math.max(0, smileScore * 1.2));
+
+                return smileScore;
             }
 
-            // --- Calculate brow position for anger detection ---
+            // --- Calculate brow ratio for anger detection ---
             function calculateBrowRatio(landmarks) {
-                // Get average brow height relative to eyes
-                let leftBrowY = 0;
-                let rightBrowY = 0;
-                let leftEyeY = 0;
-                let rightEyeY = 0;
+                let leftBrowY = 0, rightBrowY = 0;
+                let leftEyeY = 0, rightEyeY = 0;
 
-                for (let i of LEFT_BROW) {
-                    leftBrowY += landmarks[i].y;
-                }
+                for (let i of LEFT_BROW) leftBrowY += landmarks[i].y;
                 leftBrowY /= LEFT_BROW.length;
 
-                for (let i of RIGHT_BROW) {
-                    rightBrowY += landmarks[i].y;
-                }
+                for (let i of RIGHT_BROW) rightBrowY += landmarks[i].y;
                 rightBrowY /= RIGHT_BROW.length;
 
-                for (let i of LEFT_EYE_TOP) {
-                    leftEyeY += landmarks[i].y;
-                }
+                for (let i of LEFT_EYE_TOP) leftEyeY += landmarks[i].y;
                 leftEyeY /= LEFT_EYE_TOP.length;
 
-                for (let i of RIGHT_EYE_TOP) {
-                    rightEyeY += landmarks[i].y;
-                }
+                for (let i of RIGHT_EYE_TOP) rightEyeY += landmarks[i].y;
                 rightEyeY /= RIGHT_EYE_TOP.length;
 
                 const leftRatio = leftEyeY - leftBrowY;
@@ -751,6 +696,19 @@
                 blinkCountEl.textContent = blinkCounter;
             }
 
+            // --- Show blink notification ---
+            function showBlinkNotification() {
+                blinkNotification.classList.remove('show');
+                // Force reflow
+                void blinkNotification.offsetWidth;
+                blinkNotification.classList.add('show');
+                
+                // Auto hide after animation
+                setTimeout(() => {
+                    blinkNotification.classList.remove('show');
+                }, 800);
+            }
+
             // --- Reset blink counter ---
             function resetBlinkCounter() {
                 blinkCounter = 0;
@@ -760,10 +718,11 @@
                 blinkFrameCount = 0;
                 blinkCountEl.textContent = '0';
                 blinkRateEl.textContent = '0';
+                blinkNotification.classList.remove('show');
                 console.log('🔄 Blink counter reset');
             }
 
-            // --- Process face landmarks for blink detection and expression ---
+            // --- Process face landmarks ---
             function processLandmarks(landmarks) {
                 if (!landmarks || landmarks.length === 0) {
                     faceStatusEl.textContent = 'Tidak Terdeteksi';
@@ -775,7 +734,6 @@
                     return;
                 }
 
-                // Face detected
                 faceStatusEl.textContent = '✓ Terdeteksi';
                 faceStatusEl.style.color = '#2ecc71';
 
@@ -792,6 +750,9 @@
                         blinkHistory.push(Date.now());
                         lastBlinkTime = Date.now();
                         
+                        // Show notification
+                        showBlinkNotification();
+                        
                         const cutoff = Date.now() - 60000;
                         blinkHistory = blinkHistory.filter(t => t > cutoff);
                         
@@ -807,15 +768,14 @@
                     }
                 }
 
-                // --- Smile Detection ---
-                const mouthRatio = calculateMouthRatio(landmarks);
-                // Threshold for smile: mouth ratio > 0.5 indicates smiling
-                smileIntensity = Math.min(1, (mouthRatio - 0.4) * 5);
-                smileIntensity = Math.max(0, smileIntensity);
+                // --- Smile Detection (lebih akurat) ---
+                smileIntensity = calculateSmileIntensity(landmarks);
                 
-                const isSmiling = smileIntensity > 0.3;
+                // Threshold untuk senyum
+                const isSmiling = smileIntensity > 0.25;
                 if (isSmiling) {
-                    smileStatusEl.textContent = '😊 ' + Math.round(smileIntensity * 100) + '%';
+                    const percent = Math.round(smileIntensity * 100);
+                    smileStatusEl.textContent = '😊 ' + percent + '%';
                     smileStatusEl.style.color = '#f1c40f';
                 } else {
                     smileStatusEl.textContent = '😐 0%';
@@ -824,12 +784,12 @@
 
                 // --- Anger Detection ---
                 const browRatio = calculateBrowRatio(landmarks);
-                // Lower brow ratio means brows are lowered (angry)
-                angryIntensity = Math.min(1, Math.max(0, (0.08 - browRatio) * 20));
+                angryIntensity = Math.min(1, Math.max(0, (0.085 - browRatio) * 25));
                 
-                const isAngry = angryIntensity > 0.3;
+                const isAngry = angryIntensity > 0.25;
                 if (isAngry) {
-                    angryStatusEl.textContent = '😠 ' + Math.round(angryIntensity * 100) + '%';
+                    const percent = Math.round(angryIntensity * 100);
+                    angryStatusEl.textContent = '😠 ' + percent + '%';
                     angryStatusEl.style.color = '#e74c3c';
                 } else {
                     angryStatusEl.textContent = '😌 0%';
@@ -860,7 +820,7 @@
                 }
             }
 
-            // --- Draw face mesh landmarks on canvas ---
+            // --- Draw face mesh dengan detail lebih ---
             function drawFaceMesh(landmarks) {
                 const canvasWidth = canvas.width;
                 const canvasHeight = canvas.height;
@@ -871,7 +831,7 @@
                     return;
                 }
 
-                // Draw face mesh points
+                // Draw all face mesh points
                 for (let i = 0; i < landmarks.length; i++) {
                     const x = landmarks[i].x * canvasWidth;
                     const y = landmarks[i].y * canvasHeight;
@@ -882,12 +842,12 @@
                     if (i % 3 === 0) {
                         ctx.fillStyle = 'rgba(46, 204, 113, 0.8)';
                     } else {
-                        ctx.fillStyle = 'rgba(46, 204, 113, 0.4)';
+                        ctx.fillStyle = 'rgba(46, 204, 113, 0.3)';
                     }
                     ctx.fill();
                 }
 
-                // Highlight eyes with different colors based on blink state
+                // Highlight eyes dengan lebih detail
                 const drawEye = (indices, color, isBlinking) => {
                     ctx.strokeStyle = isBlinking ? 'rgba(231, 76, 60, 0.9)' : color;
                     ctx.lineWidth = isBlinking ? 3 : 2;
@@ -906,18 +866,30 @@
                     }
                     ctx.closePath();
                     ctx.stroke();
+
+                    // Fill with semi-transparent color
+                    ctx.fillStyle = isBlinking ? 'rgba(231, 76, 60, 0.1)' : 'rgba(52, 152, 219, 0.05)';
+                    ctx.fill();
                 };
 
                 drawEye(LEFT_EYE_INDICES, 'rgba(52, 152, 219, 0.7)', isBlinking);
                 drawEye(RIGHT_EYE_INDICES, 'rgba(52, 152, 219, 0.7)', isBlinking);
 
-                // Highlight mouth for smile detection
-                ctx.strokeStyle = smileIntensity > 0.3 ? 'rgba(241, 196, 15, 0.7)' : 'rgba(127, 140, 141, 0.4)';
-                ctx.lineWidth = smileIntensity > 0.3 ? 3 : 1.5;
+                // Highlight mouth dengan detail lebih untuk deteksi senyum
+                const mouthColor = smileIntensity > 0.25 ? 
+                    `rgba(241, 196, 15, ${0.3 + smileIntensity * 0.5})` : 
+                    'rgba(127, 140, 141, 0.2)';
+                const mouthBorderColor = smileIntensity > 0.25 ? 
+                    `rgba(241, 196, 15, ${0.5 + smileIntensity * 0.5})` : 
+                    'rgba(127, 140, 141, 0.3)';
+                
+                ctx.strokeStyle = mouthBorderColor;
+                ctx.lineWidth = smileIntensity > 0.25 ? 2.5 : 1.5;
+                ctx.fillStyle = mouthColor;
+                
                 ctx.beginPath();
-                const mouthPoints = [...MOUTH_TOP, ...MOUTH_BOTTOM];
-                for (let i = 0; i < mouthPoints.length; i++) {
-                    const idx = mouthPoints[i];
+                for (let i = 0; i < MOUTH_INDICES.length; i++) {
+                    const idx = MOUTH_INDICES[i];
                     if (idx < landmarks.length) {
                         const x = landmarks[idx].x * canvasWidth;
                         const y = landmarks[idx].y * canvasHeight;
@@ -929,11 +901,21 @@
                     }
                 }
                 ctx.closePath();
+                ctx.fill();
                 ctx.stroke();
 
                 // Highlight brows for anger detection
-                ctx.strokeStyle = angryIntensity > 0.3 ? 'rgba(231, 76, 60, 0.7)' : 'rgba(127, 140, 141, 0.3)';
-                ctx.lineWidth = angryIntensity > 0.3 ? 3 : 1.5;
+                const browColor = angryIntensity > 0.25 ? 
+                    `rgba(231, 76, 60, ${0.3 + angryIntensity * 0.5})` : 
+                    'rgba(127, 140, 141, 0.15)';
+                const browBorderColor = angryIntensity > 0.25 ? 
+                    `rgba(231, 76, 60, ${0.5 + angryIntensity * 0.5})` : 
+                    'rgba(127, 140, 141, 0.2)';
+                
+                ctx.strokeStyle = browBorderColor;
+                ctx.lineWidth = angryIntensity > 0.25 ? 2.5 : 1.5;
+                ctx.fillStyle = browColor;
+                
                 const browPoints = [...LEFT_BROW, ...RIGHT_BROW];
                 ctx.beginPath();
                 for (let i = 0; i < browPoints.length; i++) {
@@ -948,6 +930,8 @@
                         }
                     }
                 }
+                ctx.closePath();
+                ctx.fill();
                 ctx.stroke();
 
                 // Draw status info on canvas
@@ -955,19 +939,23 @@
                 ctx.font = '13px Inter, sans-serif';
                 ctx.textAlign = 'left';
                 ctx.fillText(`👁️ Kedipan: ${blinkCounter}`, 15, 30);
-                ctx.fillText(`😊 Senyum: ${Math.round(smileIntensity * 100)}%`, 15, 55);
-                ctx.fillText(`😠 Marah: ${Math.round(angryIntensity * 100)}%`, 15, 80);
+                
+                const smilePercent = Math.round(smileIntensity * 100);
+                const angryPercent = Math.round(angryIntensity * 100);
+                ctx.fillStyle = smileIntensity > 0.25 ? '#f1c40f' : 'rgba(255,255,255,0.5)';
+                ctx.fillText(`😊 Senyum: ${smilePercent}%`, 15, 55);
+                ctx.fillStyle = angryIntensity > 0.25 ? '#e74c3c' : 'rgba(255,255,255,0.5)';
+                ctx.fillText(`😠 Marah: ${angryPercent}%`, 15, 80);
+                ctx.fillStyle = 'rgba(255,255,255,0.6)';
                 ctx.fillText(`📊 ${currentExpression}`, 15, 105);
 
-                // Blink notification
-                if (isBlinking) {
-                    ctx.fillStyle = 'rgba(231, 76, 60, 0.15)';
-                    ctx.fillRect(0, 0, canvasWidth, canvasHeight);
-                    ctx.fillStyle = 'rgba(231, 76, 60, 0.9)';
-                    ctx.font = 'bold 28px Inter, sans-serif';
-                    ctx.textAlign = 'center';
-                    ctx.fillText('👁️ BLINK!', canvasWidth / 2, 60);
-                }
+                // EAR value for debugging (small)
+                const leftEAR = calculateEAR(landmarks, LEFT_EYE_INDICES);
+                const rightEAR = calculateEAR(landmarks, RIGHT_EYE_INDICES);
+                const avgEAR = (leftEAR + rightEAR) / 2;
+                ctx.fillStyle = 'rgba(255,255,255,0.3)';
+                ctx.font = '10px monospace';
+                ctx.fillText(`EAR: ${avgEAR.toFixed(3)}`, 15, canvasHeight - 15);
             }
 
             // --- Initialize Face Mesh ---
@@ -1000,7 +988,7 @@
                 console.log('🧬 Face Mesh initialized');
             }
 
-            // --- Start Camera with MediaPipe ---
+            // --- Start Camera ---
             async function startCamera() {
                 try {
                     setStatus('loading', 'Mengakses kamera...');
@@ -1018,7 +1006,6 @@
                     stream = await navigator.mediaDevices.getUserMedia(constraints);
                     video.srcObject = stream;
                     await video.play();
-
                     resizeCanvas();
 
                     if (!faceMesh) {
@@ -1086,6 +1073,7 @@
                 expressionStatusEl.className = 'value expression neutral';
                 smileStatusEl.textContent = '-';
                 angryStatusEl.textContent = '-';
+                blinkNotification.classList.remove('show');
 
                 setStatus('inactive', 'Kamera dihentikan');
                 console.log('📷 Kamera dihentikan');
@@ -1154,11 +1142,11 @@
 
             setInterval(updateBlinkStats, 1000);
 
-            console.log('🎥 Webcam Fisika dengan Face Analysis siap digunakan');
+            console.log('🎥 Webcam Fisika dengan Face Analysis Pro siap digunakan');
             console.log('📌 Shortcut: [Space] toggle kamera, [R] reset counter');
-            console.log('👁️ Blink detection aktif!');
-            console.log('😊 Smile detection aktif!');
-            console.log('😠 Anger detection aktif!');
+            console.log('👁️ Blink detection dengan notifikasi visual!');
+            console.log('😊 Smile detection dengan analisis mulut detail!');
+            console.log('😠 Anger detection dengan analisis alis!');
 
         })();
     </script>
