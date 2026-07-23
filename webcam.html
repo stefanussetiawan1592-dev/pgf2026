@@ -771,7 +771,7 @@
                 console.error('❌ Browser tidak mendukung getUserMedia');
             }
 
-            // --- Status saat tab tidak aktif (pause) ---
+            // --- Status saat tab tidak aktif ---
             document.addEventListener('visibilitychange', () => {
                 if (document.hidden && isActive) {
                     console.log('👀 Tab tidak aktif, kamera tetap berjalan');
