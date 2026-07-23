@@ -141,7 +141,7 @@
             color: #4a7a9c;
         }
 
-        /* Card Webcam */
+        /* Webcam Card */
         .webcam-card {
             background: rgba(255, 255, 255, 0.05);
             backdrop-filter: blur(20px);
@@ -216,6 +216,7 @@
             display: flex;
             gap: 10px;
             align-items: center;
+            flex-wrap: wrap;
         }
 
         .webcam-header .right .cam-label {
@@ -324,6 +325,8 @@
         .video-wrapper .placeholder p {
             font-size: 1rem;
             opacity: 0.6;
+            max-width: 300px;
+            text-align: center;
         }
 
         .video-wrapper .overlay-text {
@@ -492,18 +495,18 @@
             <div class="webcam-header">
                 <div class="left">
                     <div class="indicator">
-                        <span class="dot loading" id="statusDot"></span>
-                        <span id="statusText">Memulai kamera...</span>
+                        <span class="dot inactive" id="statusDot"></span>
+                        <span id="statusText">Kamera tidak aktif</span>
                     </div>
                 </div>
                 <div class="right">
                     <span class="cam-label">
                         <i class="fas fa-camera"></i> Webcam
                     </span>
-                    <button class="btn-cam" id="toggleBtn">
+                    <button class="btn-cam success" id="toggleBtn">
                         <i class="fas fa-play"></i> Mulai
                     </button>
-                    <button class="btn-cam danger" id="screenshotBtn" disabled>
+                    <button class="btn-cam" id="screenshotBtn" disabled>
                         <i class="fas fa-camera"></i> SS
                     </button>
                 </div>
@@ -563,6 +566,8 @@
 
     <script>
         (function() {
+            'use strict';
+            
             const video = document.getElementById('videoElement');
             const statusDot = document.getElementById('statusDot');
             const statusText = document.getElementById('statusText');
@@ -769,7 +774,6 @@
             // --- Status saat tab tidak aktif (pause) ---
             document.addEventListener('visibilitychange', () => {
                 if (document.hidden && isActive) {
-                    // Tab tidak aktif, tapi biarkan kamera tetap berjalan
                     console.log('👀 Tab tidak aktif, kamera tetap berjalan');
                 }
             });
@@ -777,6 +781,12 @@
             console.log('🎥 Webcam Fisika siap digunakan');
             console.log('📌 Shortcut: [Space] toggle kamera, [S] screenshot');
             console.log('🔬 Tema Fisika by Stefanus Setiawan');
+            
+            // Tampilkan pesan jika halaman di-load sebagai file
+            if (window.location.protocol === 'file:') {
+                console.warn('⚠️ Halaman di-load sebagai file lokal. Beberapa browser mungkin membatasi akses kamera.');
+                setStatus('inactive', '⚠️ Buka melalui server web (localhost) untuk akses kamera');
+            }
         })();
     </script>
 </body>
