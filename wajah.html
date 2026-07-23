@@ -287,7 +287,6 @@
 
         .video-wrapper .overlay-text.show { display: block; }
 
-        /* Blink Notification */
         .blink-notification {
             position: absolute;
             top: 50%;
@@ -554,7 +553,7 @@
             let isBlinking = false;
             let blinkFrameCount = 0;
             let lastBlinkTime = 0;
-            const BLINK_THRESHOLD = 0.022;
+            const BLINK_THRESHOLD = 0.015; // Jarak minimal mata tertutup
             const BLINK_FRAMES = 2;
 
             // Expression variables
@@ -562,23 +561,26 @@
             let angryIntensity = 0;
             let currentExpression = 'Netral';
 
-            // EAR indices
+            // --- Landmark indices berdasarkan spesifikasi ---
+            // Untuk marah: point 107 dan 336 (alis) dengan point 9 (forehead)
+            const LEFT_BROW_POINT = 107;
+            const RIGHT_BROW_POINT = 336;
+            const FOREHEAD_POINT = 9;
+
+            // Untuk senyum: point 212 dan 410 (sudut bibir)
+            const LEFT_MOUTH_CORNER = 212;
+            const RIGHT_MOUTH_CORNER = 410;
+
+            // Untuk kedipan: point 159 dan 145 (mata kiri), 386 dan 373 (mata kanan)
+            const LEFT_EYE_TOP = 159;
+            const LEFT_EYE_BOTTOM = 145;
+            const RIGHT_EYE_TOP = 386;
+            const RIGHT_EYE_BOTTOM = 373;
+
+            // Tambahan untuk visualisasi
             const LEFT_EYE_INDICES = [33, 133, 160, 158, 153, 144];
             const RIGHT_EYE_INDICES = [362, 263, 387, 385, 380, 373];
-
-            // MOUTH indices - lebih detail untuk deteksi senyum
-            const MOUTH_INDICES = [
-                61, 185, 40, 39, 37, 0, 267, 269, 270, 409,
-                291, 375, 321, 405, 314, 17, 84, 181, 91, 146,
-                78, 191, 80, 81, 82, 13, 312, 311, 310, 415,
-                308, 324, 318, 402, 317, 14, 87, 178, 88, 95
-            ];
-
-            // Brow indices for anger detection
-            const LEFT_BROW = [55, 65, 52, 53, 46];
-            const RIGHT_BROW = [285, 295, 282, 283, 276];
-            const LEFT_EYE_TOP = [159, 158, 157, 173, 133];
-            const RIGHT_EYE_TOP = [386, 385, 384, 398, 362];
+            const MOUTH_INDICES = [61, 185, 40, 39, 37, 0, 267, 269, 270, 409, 291, 375, 321, 405, 314, 17, 84, 181, 91, 146, 78, 191, 80, 81, 82, 13, 312, 311, 310, 415, 308, 324, 318, 402, 317, 14, 87, 178, 88, 95];
 
             // --- Canvas setup ---
             function resizeCanvas() {
@@ -592,93 +594,6 @@
             // --- Utility ---
             function distance(p1, p2) {
                 return Math.sqrt((p1.x - p2.x) ** 2 + (p1.y - p2.y) ** 2);
-            }
-
-            // --- Calculate EAR (Eye Aspect Ratio) ---
-            function calculateEAR(landmarks, eyeIndices) {
-                const p1 = landmarks[eyeIndices[0]];
-                const p2 = landmarks[eyeIndices[1]];
-                const p3 = landmarks[eyeIndices[2]];
-                const p4 = landmarks[eyeIndices[3]];
-                const p5 = landmarks[eyeIndices[4]];
-                const p6 = landmarks[eyeIndices[5]];
-
-                const vertical1 = distance(p2, p6);
-                const vertical2 = distance(p3, p5);
-                const horizontal = distance(p1, p4);
-
-                if (horizontal === 0) return 0;
-                return (vertical1 + vertical2) / (2.0 * horizontal);
-            }
-
-            // --- Calculate smile intensity dengan lebih akurat ---
-            function calculateSmileIntensity(landmarks) {
-                // Gunakan titik mulut bagian atas dan bawah
-                const mouthTop = landmarks[13];  // titik atas mulut
-                const mouthBottom = landmarks[14]; // titik bawah mulut
-                const mouthLeft = landmarks[61]; // kiri mulut
-                const mouthRight = landmarks[291]; // kanan mulut
-
-                // Lebar mulut
-                const mouthWidth = distance(mouthLeft, mouthRight);
-                
-                // Tinggi mulut bagian tengah
-                const mouthHeight = distance(mouthTop, mouthBottom);
-
-                // Lebar mulut bagian kiri dan kanan (untuk deteksi senyum lebih akurat)
-                const leftCorner = landmarks[61];
-                const leftMid = landmarks[91];
-                const rightCorner = landmarks[291];
-                const rightMid = landmarks[321];
-
-                const leftWidth = distance(leftCorner, leftMid);
-                const rightWidth = distance(rightCorner, rightMid);
-
-                // Rasio tinggi/lebar mulut
-                const mouthRatio = mouthHeight / (mouthWidth + 0.001);
-
-                // Rasio asimetri mulut (senyum biasanya asimetris)
-                const asymmetry = Math.abs(leftWidth - rightWidth) / (mouthWidth + 0.001);
-
-                // Kombinasi untuk deteksi senyum yang lebih akurat
-                let smileScore = 0;
-
-                // Semakin tinggi mouthRatio, semakin besar senyum
-                if (mouthRatio > 0.35) {
-                    smileScore += (mouthRatio - 0.35) * 3;
-                }
-
-                // Asimetri juga indikasi senyum
-                if (asymmetry > 0.05) {
-                    smileScore += asymmetry * 2;
-                }
-
-                // Normalisasi ke 0-1
-                smileScore = Math.min(1, Math.max(0, smileScore * 1.2));
-
-                return smileScore;
-            }
-
-            // --- Calculate brow ratio for anger detection ---
-            function calculateBrowRatio(landmarks) {
-                let leftBrowY = 0, rightBrowY = 0;
-                let leftEyeY = 0, rightEyeY = 0;
-
-                for (let i of LEFT_BROW) leftBrowY += landmarks[i].y;
-                leftBrowY /= LEFT_BROW.length;
-
-                for (let i of RIGHT_BROW) rightBrowY += landmarks[i].y;
-                rightBrowY /= RIGHT_BROW.length;
-
-                for (let i of LEFT_EYE_TOP) leftEyeY += landmarks[i].y;
-                leftEyeY /= LEFT_EYE_TOP.length;
-
-                for (let i of RIGHT_EYE_TOP) rightEyeY += landmarks[i].y;
-                rightEyeY /= RIGHT_EYE_TOP.length;
-
-                const leftRatio = leftEyeY - leftBrowY;
-                const rightRatio = rightEyeY - rightBrowY;
-                return (leftRatio + rightRatio) / 2;
             }
 
             // --- Update blink statistics ---
@@ -699,11 +614,8 @@
             // --- Show blink notification ---
             function showBlinkNotification() {
                 blinkNotification.classList.remove('show');
-                // Force reflow
                 void blinkNotification.offsetWidth;
                 blinkNotification.classList.add('show');
-                
-                // Auto hide after animation
                 setTimeout(() => {
                     blinkNotification.classList.remove('show');
                 }, 800);
@@ -722,7 +634,7 @@
                 console.log('🔄 Blink counter reset');
             }
 
-            // --- Process face landmarks ---
+            // --- Process face landmarks dengan algoritma yang diperbaiki ---
             function processLandmarks(landmarks) {
                 if (!landmarks || landmarks.length === 0) {
                     faceStatusEl.textContent = 'Tidak Terdeteksi';
@@ -737,27 +649,26 @@
                 faceStatusEl.textContent = '✓ Terdeteksi';
                 faceStatusEl.style.color = '#2ecc71';
 
-                // --- Blink Detection ---
-                const leftEAR = calculateEAR(landmarks, LEFT_EYE_INDICES);
-                const rightEAR = calculateEAR(landmarks, RIGHT_EYE_INDICES);
-                const avgEAR = (leftEAR + rightEAR) / 2;
+                // --- DETEKSI KEDIPAN ---
+                // Menggunakan point 159 dan 145 (mata kiri) dan 386 dan 373 (mata kanan)
+                const leftEyeDist = distance(landmarks[LEFT_EYE_TOP], landmarks[LEFT_EYE_BOTTOM]);
+                const rightEyeDist = distance(landmarks[RIGHT_EYE_TOP], landmarks[RIGHT_EYE_BOTTOM]);
+                const avgEyeDist = (leftEyeDist + rightEyeDist) / 2;
 
-                if (avgEAR < BLINK_THRESHOLD) {
+                // Jika jarak mata sangat kecil, mata tertutup (berkedip)
+                if (avgEyeDist < BLINK_THRESHOLD) {
                     blinkFrameCount++;
                     if (!isBlinking && blinkFrameCount > BLINK_FRAMES) {
                         isBlinking = true;
                         blinkCounter++;
                         blinkHistory.push(Date.now());
                         lastBlinkTime = Date.now();
-                        
-                        // Show notification
                         showBlinkNotification();
                         
                         const cutoff = Date.now() - 60000;
                         blinkHistory = blinkHistory.filter(t => t > cutoff);
-                        
                         updateBlinkStats();
-                        console.log('👁️ Blink detected! Total:', blinkCounter);
+                        console.log('👁️ Blink detected! Total:', blinkCounter, 'avgEyeDist:', avgEyeDist.toFixed(4));
                     }
                 } else {
                     if (isBlinking) {
@@ -768,12 +679,33 @@
                     }
                 }
 
-                // --- Smile Detection (lebih akurat) ---
-                smileIntensity = calculateSmileIntensity(landmarks);
-                
-                // Threshold untuk senyum
-                const isSmiling = smileIntensity > 0.25;
-                if (isSmiling) {
+                // --- DETEKSI MARAH ---
+                // Point 107 dan 336 (alis) semakin mendekat dengan point 9 (forehead)
+                const leftBrowToForehead = distance(landmarks[LEFT_BROW_POINT], landmarks[FOREHEAD_POINT]);
+                const rightBrowToForehead = distance(landmarks[RIGHT_BROW_POINT], landmarks[FOREHEAD_POINT]);
+                const avgBrowToForehead = (leftBrowToForehead + rightBrowToForehead) / 2;
+
+                // Normalisasi: semakin kecil jarak, semakin marah
+                // Threshold untuk deteksi marah: jarak < 0.12 (nilai normal sekitar 0.15-0.2)
+                const angryRaw = Math.max(0, Math.min(1, (0.12 - avgBrowToForehead) * 12));
+                angryIntensity = Math.min(1, angryRaw * 1.2);
+
+                // --- DETEKSI SENYUM ---
+                // Point 212 dan 410 naik dari posisi awal (sudut bibir)
+                // Ukur jarak sudut bibir ke titik referensi (misalnya point 13 = tengah atas mulut)
+                const mouthCenter = landmarks[13];
+                const leftCornerDist = distance(landmarks[LEFT_MOUTH_CORNER], mouthCenter);
+                const rightCornerDist = distance(landmarks[RIGHT_MOUTH_CORNER], mouthCenter);
+                const avgCornerDist = (leftCornerDist + rightCornerDist) / 2;
+
+                // Semakin besar jarak sudut bibir ke tengah, semakin besar senyum
+                // Normalisasi: nilai normal sekitar 0.04-0.06, senyum bisa mencapai 0.1+
+                const smileRaw = Math.max(0, Math.min(1, (avgCornerDist - 0.04) * 20));
+                smileIntensity = Math.min(1, smileRaw * 1.3);
+
+                // --- UPDATE UI ---
+                // Update smile status
+                if (smileIntensity > 0.2) {
                     const percent = Math.round(smileIntensity * 100);
                     smileStatusEl.textContent = '😊 ' + percent + '%';
                     smileStatusEl.style.color = '#f1c40f';
@@ -782,12 +714,8 @@
                     smileStatusEl.style.color = '#7f9fc7';
                 }
 
-                // --- Anger Detection ---
-                const browRatio = calculateBrowRatio(landmarks);
-                angryIntensity = Math.min(1, Math.max(0, (0.085 - browRatio) * 25));
-                
-                const isAngry = angryIntensity > 0.25;
-                if (isAngry) {
+                // Update angry status
+                if (angryIntensity > 0.2) {
                     const percent = Math.round(angryIntensity * 100);
                     angryStatusEl.textContent = '😠 ' + percent + '%';
                     angryStatusEl.style.color = '#e74c3c';
@@ -796,7 +724,10 @@
                     angryStatusEl.style.color = '#7f9fc7';
                 }
 
-                // --- Determine Overall Expression ---
+                // Determine overall expression
+                const isSmiling = smileIntensity > 0.25;
+                const isAngry = angryIntensity > 0.25;
+
                 if (isSmiling && smileIntensity > 0.5) {
                     currentExpression = '😊 Senyum';
                     expressionStatusEl.className = 'value expression happy';
@@ -818,9 +749,12 @@
                     expressionStatusEl.className = 'value expression neutral';
                     expressionStatusEl.textContent = '😐 Netral';
                 }
+
+                // Debug log untuk tuning
+                // console.log('👁️ EyeDist:', avgEyeDist.toFixed(4), '| 😠 BrowDist:', avgBrowToForehead.toFixed(4), '| 😊 SmileDist:', avgCornerDist.toFixed(4));
             }
 
-            // --- Draw face mesh dengan detail lebih ---
+            // --- Draw face mesh dengan highlight pada point-point penting ---
             function drawFaceMesh(landmarks) {
                 const canvasWidth = canvas.width;
                 const canvasHeight = canvas.height;
@@ -847,9 +781,9 @@
                     ctx.fill();
                 }
 
-                // Highlight eyes dengan lebih detail
-                const drawEye = (indices, color, isBlinking) => {
-                    ctx.strokeStyle = isBlinking ? 'rgba(231, 76, 60, 0.9)' : color;
+                // Highlight eyes untuk visualisasi kedipan
+                const drawEye = (indices, isBlinking) => {
+                    ctx.strokeStyle = isBlinking ? 'rgba(231, 76, 60, 0.9)' : 'rgba(52, 152, 219, 0.7)';
                     ctx.lineWidth = isBlinking ? 3 : 2;
                     ctx.beginPath();
                     for (let i = 0; i < indices.length; i++) {
@@ -866,27 +800,80 @@
                     }
                     ctx.closePath();
                     ctx.stroke();
-
-                    // Fill with semi-transparent color
                     ctx.fillStyle = isBlinking ? 'rgba(231, 76, 60, 0.1)' : 'rgba(52, 152, 219, 0.05)';
                     ctx.fill();
                 };
 
-                drawEye(LEFT_EYE_INDICES, 'rgba(52, 152, 219, 0.7)', isBlinking);
-                drawEye(RIGHT_EYE_INDICES, 'rgba(52, 152, 219, 0.7)', isBlinking);
+                drawEye(LEFT_EYE_INDICES, isBlinking);
+                drawEye(RIGHT_EYE_INDICES, isBlinking);
 
-                // Highlight mouth dengan detail lebih untuk deteksi senyum
-                const mouthColor = smileIntensity > 0.25 ? 
+                // Highlight point-point penting untuk deteksi
+                // Point mata (159, 145, 386, 373) - warna merah saat berkedip
+                const eyePoints = [LEFT_EYE_TOP, LEFT_EYE_BOTTOM, RIGHT_EYE_TOP, RIGHT_EYE_BOTTOM];
+                for (let idx of eyePoints) {
+                    if (idx < landmarks.length) {
+                        const x = landmarks[idx].x * canvasWidth;
+                        const y = landmarks[idx].y * canvasHeight;
+                        ctx.beginPath();
+                        ctx.arc(x, y, 6, 0, Math.PI * 2);
+                        ctx.fillStyle = isBlinking ? 'rgba(231, 76, 60, 0.9)' : 'rgba(52, 152, 219, 0.8)';
+                        ctx.fill();
+                        ctx.strokeStyle = 'white';
+                        ctx.lineWidth = 1;
+                        ctx.stroke();
+                        // Label
+                        ctx.fillStyle = 'rgba(255,255,255,0.5)';
+                        ctx.font = '8px monospace';
+                        ctx.textAlign = 'center';
+                        ctx.fillText(idx, x, y - 10);
+                    }
+                }
+
+                // Highlight point marah (107, 336, 9)
+                const angryPoints = [LEFT_BROW_POINT, RIGHT_BROW_POINT, FOREHEAD_POINT];
+                for (let idx of angryPoints) {
+                    if (idx < landmarks.length) {
+                        const x = landmarks[idx].x * canvasWidth;
+                        const y = landmarks[idx].y * canvasHeight;
+                        ctx.beginPath();
+                        ctx.arc(x, y, 6, 0, Math.PI * 2);
+                        ctx.fillStyle = angryIntensity > 0.25 ? 'rgba(231, 76, 60, 0.9)' : 'rgba(255, 165, 0, 0.5)';
+                        ctx.fill();
+                        ctx.strokeStyle = 'white';
+                        ctx.lineWidth = 1;
+                        ctx.stroke();
+                        ctx.fillStyle = 'rgba(255,255,255,0.5)';
+                        ctx.font = '8px monospace';
+                        ctx.textAlign = 'center';
+                        ctx.fillText(idx, x, y - 10);
+                    }
+                }
+
+                // Highlight point senyum (212, 410)
+                const smilePoints = [LEFT_MOUTH_CORNER, RIGHT_MOUTH_CORNER];
+                for (let idx of smilePoints) {
+                    if (idx < landmarks.length) {
+                        const x = landmarks[idx].x * canvasWidth;
+                        const y = landmarks[idx].y * canvasHeight;
+                        ctx.beginPath();
+                        ctx.arc(x, y, 6, 0, Math.PI * 2);
+                        ctx.fillStyle = smileIntensity > 0.25 ? 'rgba(241, 196, 15, 0.9)' : 'rgba(255, 165, 0, 0.5)';
+                        ctx.fill();
+                        ctx.strokeStyle = 'white';
+                        ctx.lineWidth = 1;
+                        ctx.stroke();
+                        ctx.fillStyle = 'rgba(255,255,255,0.5)';
+                        ctx.font = '8px monospace';
+                        ctx.textAlign = 'center';
+                        ctx.fillText(idx, x, y - 10);
+                    }
+                }
+
+                // Highlight mouth
+                ctx.strokeStyle = smileIntensity > 0.25 ? 
                     `rgba(241, 196, 15, ${0.3 + smileIntensity * 0.5})` : 
                     'rgba(127, 140, 141, 0.2)';
-                const mouthBorderColor = smileIntensity > 0.25 ? 
-                    `rgba(241, 196, 15, ${0.5 + smileIntensity * 0.5})` : 
-                    'rgba(127, 140, 141, 0.3)';
-                
-                ctx.strokeStyle = mouthBorderColor;
                 ctx.lineWidth = smileIntensity > 0.25 ? 2.5 : 1.5;
-                ctx.fillStyle = mouthColor;
-                
                 ctx.beginPath();
                 for (let i = 0; i < MOUTH_INDICES.length; i++) {
                     const idx = MOUTH_INDICES[i];
@@ -901,40 +888,9 @@
                     }
                 }
                 ctx.closePath();
-                ctx.fill();
                 ctx.stroke();
 
-                // Highlight brows for anger detection
-                const browColor = angryIntensity > 0.25 ? 
-                    `rgba(231, 76, 60, ${0.3 + angryIntensity * 0.5})` : 
-                    'rgba(127, 140, 141, 0.15)';
-                const browBorderColor = angryIntensity > 0.25 ? 
-                    `rgba(231, 76, 60, ${0.5 + angryIntensity * 0.5})` : 
-                    'rgba(127, 140, 141, 0.2)';
-                
-                ctx.strokeStyle = browBorderColor;
-                ctx.lineWidth = angryIntensity > 0.25 ? 2.5 : 1.5;
-                ctx.fillStyle = browColor;
-                
-                const browPoints = [...LEFT_BROW, ...RIGHT_BROW];
-                ctx.beginPath();
-                for (let i = 0; i < browPoints.length; i++) {
-                    const idx = browPoints[i];
-                    if (idx < landmarks.length) {
-                        const x = landmarks[idx].x * canvasWidth;
-                        const y = landmarks[idx].y * canvasHeight;
-                        if (i === 0) {
-                            ctx.moveTo(x, y);
-                        } else {
-                            ctx.lineTo(x, y);
-                        }
-                    }
-                }
-                ctx.closePath();
-                ctx.fill();
-                ctx.stroke();
-
-                // Draw status info on canvas
+                // Draw info on canvas
                 ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
                 ctx.font = '13px Inter, sans-serif';
                 ctx.textAlign = 'left';
@@ -949,13 +905,17 @@
                 ctx.fillStyle = 'rgba(255,255,255,0.6)';
                 ctx.fillText(`📊 ${currentExpression}`, 15, 105);
 
-                // EAR value for debugging (small)
-                const leftEAR = calculateEAR(landmarks, LEFT_EYE_INDICES);
-                const rightEAR = calculateEAR(landmarks, RIGHT_EYE_INDICES);
-                const avgEAR = (leftEAR + rightEAR) / 2;
+                // Debug info - nilai mentah untuk tuning
                 ctx.fillStyle = 'rgba(255,255,255,0.3)';
                 ctx.font = '10px monospace';
-                ctx.fillText(`EAR: ${avgEAR.toFixed(3)}`, 15, canvasHeight - 15);
+                if (landmarks[LEFT_EYE_TOP] && landmarks[LEFT_EYE_BOTTOM]) {
+                    const eyeDist = distance(landmarks[LEFT_EYE_TOP], landmarks[LEFT_EYE_BOTTOM]);
+                    ctx.fillText(`EyeDist: ${eyeDist.toFixed(3)}`, 15, canvasHeight - 30);
+                }
+                if (landmarks[LEFT_BROW_POINT] && landmarks[FOREHEAD_POINT]) {
+                    const browDist = distance(landmarks[LEFT_BROW_POINT], landmarks[FOREHEAD_POINT]);
+                    ctx.fillText(`BrowDist: ${browDist.toFixed(3)}`, 15, canvasHeight - 15);
+                }
             }
 
             // --- Initialize Face Mesh ---
@@ -1144,9 +1104,9 @@
 
             console.log('🎥 Webcam Fisika dengan Face Analysis Pro siap digunakan');
             console.log('📌 Shortcut: [Space] toggle kamera, [R] reset counter');
-            console.log('👁️ Blink detection dengan notifikasi visual!');
-            console.log('😊 Smile detection dengan analisis mulut detail!');
-            console.log('😠 Anger detection dengan analisis alis!');
+            console.log('👁️ Blink detection menggunakan point 159,145,386,373');
+            console.log('😊 Smile detection menggunakan point 212,410');
+            console.log('😠 Anger detection menggunakan point 107,336,9');
 
         })();
     </script>
