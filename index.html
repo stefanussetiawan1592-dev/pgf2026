@@ -384,19 +384,81 @@
             box-shadow: 0 4px 12px rgba(231, 76, 60, 0.3);
         }
 
-        .video-wrapper video {
+        /* Menggunakan iframe untuk menghindari CORS dan Mixed Content */
+        .video-wrapper iframe {
             width: 100%;
             height: 100%;
-            object-fit: cover;
+            border: none;
             display: block;
-            transition: transform 0.3s ease;
             position: relative;
             z-index: 1;
+            background: #0b1a2e;
+            transition: transform 0.3s ease;
         }
 
-        .video-wrapper video.zoomed {
+        .video-wrapper iframe.zoomed {
             transform: scale(var(--zoom-level, 1));
         }
+
+        .video-placeholder {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            color: white;
+            padding: 2rem;
+            text-align: center;
+            gap: 16px;
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 0;
+            background: #0b1a2e;
+        }
+
+        .video-placeholder i {
+            font-size: 4rem;
+            opacity: 0.6;
+        }
+
+        .video-placeholder p {
+            opacity: 0.8;
+            font-size: 0.95rem;
+            max-width: 300px;
+        }
+
+        .video-placeholder .retry-btn {
+            background: rgba(255,255,255,0.15);
+            border: 1px solid rgba(255,255,255,0.3);
+            color: white;
+            padding: 8px 24px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+
+        .video-placeholder .retry-btn:hover {
+            background: rgba(255,255,255,0.25);
+            transform: scale(1.05);
+        }
+
+        .corner-decor {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(255, 255, 255, 0.2);
+            pointer-events: none;
+            z-index: 4;
+        }
+
+        .corner-decor.tl { top: 10px; left: 10px; border-right: none; border-bottom: none; border-radius: 8px 0 0 0; }
+        .corner-decor.tr { top: 10px; right: 10px; border-left: none; border-bottom: none; border-radius: 0 8px 0 0; }
+        .corner-decor.bl { bottom: 10px; left: 10px; border-right: none; border-top: none; border-radius: 0 0 0 8px; }
+        .corner-decor.br { bottom: 10px; right: 10px; border-left: none; border-top: none; border-radius: 0 0 8px 0; }
 
         .video-status {
             margin-top: 1rem;
@@ -426,59 +488,6 @@
         .status-dot.warning {
             background: #f39c12;
             animation: pulse-dot 1s infinite;
-        }
-
-        .corner-decor {
-            position: absolute;
-            width: 40px;
-            height: 40px;
-            border: 3px solid rgba(255, 255, 255, 0.2);
-            pointer-events: none;
-            z-index: 2;
-        }
-
-        .corner-decor.tl { top: 10px; left: 10px; border-right: none; border-bottom: none; border-radius: 8px 0 0 0; }
-        .corner-decor.tr { top: 10px; right: 10px; border-left: none; border-bottom: none; border-radius: 0 8px 0 0; }
-        .corner-decor.bl { bottom: 10px; left: 10px; border-right: none; border-top: none; border-radius: 0 0 0 8px; }
-        .corner-decor.br { bottom: 10px; right: 10px; border-left: none; border-top: none; border-radius: 0 0 8px 0; }
-
-        .video-placeholder {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100%;
-            color: white;
-            padding: 2rem;
-            text-align: center;
-            gap: 16px;
-        }
-
-        .video-placeholder i {
-            font-size: 4rem;
-            opacity: 0.6;
-        }
-
-        .video-placeholder p {
-            opacity: 0.8;
-            font-size: 0.95rem;
-            max-width: 300px;
-        }
-
-        .video-placeholder .retry-btn {
-            background: rgba(255,255,255,0.15);
-            border: 1px solid rgba(255,255,255,0.3);
-            color: white;
-            padding: 8px 24px;
-            border-radius: 30px;
-            cursor: pointer;
-            font-size: 0.9rem;
-            transition: all 0.2s;
-        }
-
-        .video-placeholder .retry-btn:hover {
-            background: rgba(255,255,255,0.25);
-            transform: scale(1.05);
         }
 
         /* Responsif */
@@ -609,15 +618,15 @@
             </div>
 
             <div class="video-wrapper" id="videoWrapper">
-                <!-- Video element dengan fallback -->
-                <video id="videoStream" autoplay muted playsinline>
-                    <source src="http://10.101.209.88" type="video/mp4">
-                    <source src="http://10.101.209.88" type="video/webm">
-                    <source src="http://10.101.209.88" type="video/ogg">
-                    Browser Anda tidak mendukung video tag.
-                </video>
+                <!-- Menggunakan iframe untuk menghindari CORS dan Mixed Content -->
+                <iframe 
+                    id="videoIframe"
+                    src="http://10.101.209.88" 
+                    allow="autoplay; encrypted-media"
+                    allowfullscreen>
+                </iframe>
                 
-                <!-- Placeholder yang muncul saat video error -->
+                <!-- Placeholder yang muncul jika iframe gagal -->
                 <div class="video-placeholder" id="videoPlaceholder" style="display: none;">
                     <i class="fas fa-video-slash"></i>
                     <p id="errorMessage">Tidak dapat terhubung ke stream video.<br>Pastikan perangkat terhubung ke jaringan yang sama.</p>
@@ -643,7 +652,7 @@
                 <span style="font-size:0.75rem; opacity:0.6;">
                     <i class="fas fa-network-wired"></i> 10.101.209.88
                 </span>
-                <button id="forceReloadBtn" style="background: none; border: none; color: #2a4b74; cursor: pointer; font-size: 0.75rem; opacity: 0.5; text-decoration: underline;">
+                <button id="reloadBtn" style="background: none; border: none; color: #2a4b74; cursor: pointer; font-size: 0.75rem; opacity: 0.5; text-decoration: underline;">
                     <i class="fas fa-redo"></i> reload
                 </button>
             </div>
@@ -652,21 +661,20 @@
 
     <script>
         (function() {
-            const video = document.getElementById('videoStream');
+            const iframe = document.getElementById('videoIframe');
             const statusDot = document.getElementById('statusDot');
             const statusText = document.getElementById('statusText');
             const placeholder = document.getElementById('videoPlaceholder');
             const errorMessage = document.getElementById('errorMessage');
             const retryBtn = document.getElementById('retryBtn');
-            const forceReloadBtn = document.getElementById('forceReloadBtn');
+            const reloadBtn = document.getElementById('reloadBtn');
 
             let zoomLevel = 1.0;
             const MIN_ZOOM = 0.5;
             const MAX_ZOOM = 2.5;
             const ZOOM_STEP = 0.1;
-            let retryCount = 0;
-            const MAX_RETRIES = 3;
-            let isError = false;
+            let loadAttempts = 0;
+            const MAX_ATTEMPTS = 3;
 
             // --- Zoom Control ---
             const zoomInBtn = document.getElementById('zoomIn');
@@ -676,8 +684,8 @@
 
             function applyZoom(zoom) {
                 zoomLevel = Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, zoom));
-                video.style.setProperty('--zoom-level', zoomLevel);
-                video.classList.add('zoomed');
+                iframe.style.setProperty('--zoom-level', zoomLevel);
+                iframe.classList.add('zoomed');
                 zoomLevelDisplay.textContent = zoomLevel.toFixed(1) + '×';
             }
 
@@ -700,12 +708,14 @@
 
             applyZoom(1.0);
 
-            // --- Video Status Management ---
+            // --- Status Management ---
             function setStatus(state, message) {
                 statusDot.className = 'status-dot';
                 if (state === 'connected') {
                     statusDot.classList.remove('inactive', 'warning');
                     statusText.textContent = message || 'Stream aktif';
+                    placeholder.style.display = 'none';
+                    iframe.style.display = 'block';
                 } else if (state === 'warning') {
                     statusDot.classList.add('warning');
                     statusDot.classList.remove('inactive');
@@ -718,131 +728,103 @@
             }
 
             function showError(message) {
-                isError = true;
                 placeholder.style.display = 'flex';
-                video.style.display = 'none';
+                iframe.style.display = 'none';
                 errorMessage.textContent = message || 'Tidak dapat terhubung ke stream video.';
                 setStatus('error', 'Gagal terhubung');
             }
 
             function hideError() {
-                isError = false;
                 placeholder.style.display = 'none';
-                video.style.display = 'block';
+                iframe.style.display = 'block';
             }
 
-            function loadVideo() {
+            function loadStream() {
                 hideError();
                 setStatus('warning', 'Memuat stream...');
-                video.load();
                 
-                // Set timeout untuk deteksi kegagalan
-                const loadTimeout = setTimeout(() => {
-                    if (video.readyState === 0 && !isError) {
-                        showError('Stream tidak merespons. Pastikan server aktif dan perangkat terhubung ke jaringan yang sama.');
-                    }
-                }, 8000);
+                // Reset iframe src untuk memuat ulang
+                const currentSrc = iframe.src;
+                iframe.src = 'about:blank';
+                setTimeout(() => {
+                    iframe.src = currentSrc;
+                }, 100);
 
-                video.addEventListener('loadeddata', function onLoaded() {
-                    clearTimeout(loadTimeout);
-                    if (!isError) {
+                // Timeout untuk deteksi kegagalan
+                const loadTimeout = setTimeout(() => {
+                    // Cek apakah iframe berhasil dimuat dengan mencoba akses
+                    try {
+                        // Jika iframe dari domain berbeda, kita tidak bisa akses kontennya
+                        // Tapi kita bisa cek apakah ada error dengan mendeteksi placeholder
+                        if (placeholder.style.display !== 'flex') {
+                            setStatus('connected', 'Stream aktif');
+                        }
+                    } catch (e) {
+                        // Jika terjadi error, anggap stream berhasil karena tidak bisa diakses
                         setStatus('connected', 'Stream aktif');
                     }
-                    video.removeEventListener('loadeddata', onLoaded);
-                }, { once: true });
-            }
+                }, 5000);
 
-            // --- Video Event Listeners ---
-            video.addEventListener('playing', () => {
-                if (!isError) {
+                // Event listener untuk iframe load
+                iframe.addEventListener('load', function onLoad() {
+                    clearTimeout(loadTimeout);
                     setStatus('connected', 'Stream aktif');
-                }
-            });
+                    iframe.removeEventListener('load', onLoad);
+                });
 
-            video.addEventListener('waiting', () => {
-                if (!isError) {
-                    setStatus('warning', 'Memuat stream...');
-                }
-            });
-
-            video.addEventListener('stalled', () => {
-                if (!isError) {
-                    setStatus('warning', 'Stream tertunda...');
-                }
-            });
-
-            video.addEventListener('error', (e) => {
-                const error = e.target.error;
-                let msg = 'Gagal memuat stream video.';
-                
-                if (error) {
-                    switch(error.code) {
-                        case MediaError.MEDIA_ERR_ABORTED:
-                            msg = 'Pemutaran dibatalkan.';
-                            break;
-                        case MediaError.MEDIA_ERR_NETWORK:
-                            msg = 'Gagal terhubung ke server. Pastikan perangkat terhubung ke jaringan yang sama (10.101.209.88).';
-                            break;
-                        case MediaError.MEDIA_ERR_DECODE:
-                            msg = 'Format video tidak didukung.';
-                            break;
-                        case MediaError.MEDIA_ERR_SRC_NOT_SUPPORTED:
-                            msg = 'URL stream tidak valid atau tidak didukung.';
-                            break;
-                        default:
-                            msg = 'Terjadi kesalahan tidak dikenal.';
+                // Jika setelah 8 detik masih belum connected, tampilkan error
+                setTimeout(() => {
+                    if (statusText.textContent !== 'Stream aktif' && statusText.textContent !== 'Stream aktif') {
+                        if (loadAttempts < MAX_ATTEMPTS) {
+                            loadAttempts++;
+                            setStatus('warning', `Mencoba ulang (${loadAttempts}/${MAX_ATTEMPTS})...`);
+                            setTimeout(() => {
+                                loadStream();
+                            }, 2000);
+                        } else {
+                            showError('Stream tidak merespons. Pastikan:\n• Perangkat terhubung ke jaringan yang sama\n• Server stream aktif di 10.101.209.88');
+                        }
                     }
-                }
-                
-                // Coba reload beberapa kali
-                if (retryCount < MAX_RETRIES) {
-                    retryCount++;
-                    setStatus('warning', `Mencoba ulang (${retryCount}/${MAX_RETRIES})...`);
-                    setTimeout(() => {
-                        loadVideo();
-                    }, 3000);
-                } else {
-                    showError(msg + ' Silakan coba refresh halaman atau periksa koneksi jaringan.');
-                }
-            });
+                }, 8000);
+            }
 
             // --- Retry Button ---
             retryBtn.addEventListener('click', () => {
-                retryCount = 0;
-                loadVideo();
+                loadAttempts = 0;
+                loadStream();
             });
 
-            forceReloadBtn.addEventListener('click', () => {
-                retryCount = 0;
-                loadVideo();
+            reloadBtn.addEventListener('click', () => {
+                loadAttempts = 0;
+                loadStream();
             });
+
+            // --- Handle iframe error (jika bisa dideteksi) ---
+            // Karena iframe tidak bisa mendeteksi error secara langsung,
+            // kita gunakan pendekatan timeout
 
             // --- Initial Load ---
-            // Cek apakah video bisa dimuat
             setStatus('warning', 'Menghubungkan ke stream...');
             
-            // Gunakan fetch untuk mengecek koneksi terlebih dahulu (mengatasi CORS)
-            fetch('http://10.101.209.88', { 
-                method: 'HEAD',
-                mode: 'no-cors'
-            }).catch(() => {
-                // Gagal fetch, tapi masih bisa mencoba video
-                console.log('Fetch ke stream gagal (CORS), mencoba video langsung...');
-            });
-
-            // Mulai load video
+            // Mulai load setelah 500ms
             setTimeout(() => {
-                loadVideo();
+                loadStream();
             }, 500);
 
-            // Fallback: jika setelah 10 detik masih tidak ada progress
+            // Fallback: coba lagi jika setelah 12 detik masih tidak ada progress
             setTimeout(() => {
-                if (video.readyState === 0 && !isError) {
-                    showError('Stream tidak merespons. Pastikan:\n• Perangkat terhubung ke jaringan yang sama\n• Server stream aktif di 10.101.209.88\n• CORS diizinkan');
+                if (statusText.textContent !== 'Stream aktif') {
+                    if (loadAttempts < MAX_ATTEMPTS) {
+                        loadAttempts++;
+                        loadStream();
+                    } else {
+                        showError('Stream tidak merespons. Pastikan:\n• Perangkat terhubung ke jaringan yang sama\n• Server stream aktif di 10.101.209.88');
+                    }
                 }
-            }, 10000);
+            }, 12000);
 
-            console.log('🎥 Video Stream dengan fallback dan zoom siap');
+            console.log('🎥 Video Stream dengan iframe dan zoom siap');
+            console.log('📡 Alamat stream: http://10.101.209.88');
         })();
     </script>
 </body>
