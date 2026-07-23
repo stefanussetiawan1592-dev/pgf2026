@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulasi GHS · Pegas-Massa + Grafik + Kuis</title>
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <style>
+        * { box-sizing: border-box; font-family: 'Segoe UI', Roboto, system-ui, sans-serif; }
+        body {
+            background: #f0f4fa;
+            display: flex;
+            justify-content: center;
+            padding: 20px;
+            margin: 0;
+            min-height: 100vh;
+        }
+        .main-container {
+            max-width: 1400px;
+            width: 100%;
+            background: white;
+            border-radius: 36px;
+            padding: 28px 30px 35px;
+            box-shadow: 0 20px 50px rgba(0,20,40,0.15);
+        }
+        h1 {
+            font-weight: 600;
+            font-size: 2rem;
+            color: #0b2a44;
+            margin-top: 0;
+            margin-bottom: 18px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        h1 small {
+            font-size: 1rem;
+            font-weight: 400;
+            color: #2f5577;
+            background: #e6edf6;
+            padding: 4px 18px;
+            border-radius: 40px;
+        }
+        .grid-2col {
+            display: grid;
+            grid-template-columns: 1.1fr 1.9fr;
+            gap: 28px;
+            margin-bottom: 28px;
+        }
+        /* panel kiri: simulasi + kontrol */
+        .sim-panel {
+            background: #f8faff;
+            border-radius: 28px;
+            padding: 20px 20px 18px;
+            box-shadow: inset 0 2px 8px rgba(0,0,0,0.02), 0 8px 18px rgba(0,20,40,0.06);
+        }
+        .canvas-wrapper {
+            background: white;
+            border-radius: 24px;
+            padding: 12px 10px 6px 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+            position: relative;
+        }
+        #simCanvas {
+            display: block;
+            width: 100%;
+            height: auto;
+            background: white;
+            border-radius: 18px;
+            cursor: grab;
+        }
+        .control-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px 22px;
+            margin-top: 22px;
+            background: #eef4fc;
+            padding: 18px 18px 12px;
+            border-radius: 28px;
+        }
+        .control-item {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        .control-item label {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #1f4060;
+            letter-spacing: 0.3px;
+            display: flex;
+            justify-content: space-between;
+        }
+        .control-item input[type="range"] {
+            width: 100%;
+            accent-color: #1f5a8a;
+            height: 6px;
+            border-radius: 10px;
+            background: #d0ddea;
+        }
+        .control-item .value-badge {
+            background: #1f3f60;
+            color: white;
+            padding: 0 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            line-height: 1.8;
+        }
+        .toggle-group {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-top: 2px;
+        }
+        .toggle-group label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: #1e3b5a;
+            cursor: pointer;
+        }
+        .toggle-group input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            accent-color: #1f5a8a;
+        }
+        .btn-reset {
+            background: #1f3f60;
+            color: white;
+            border: none;
+            padding: 8px 22px;
+            border-radius: 60px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: 0.2s;
+            margin-top: 6px;
+            letter-spacing: 0.4px;
+            box-shadow: 0 4px 10px rgba(20,50,80,0.15);
+        }
+        .btn-reset:hover { background: #12324f; transform: scale(0.97); }
+
+        /* panel kanan: grafik */
+        .chart-panel {
+            background: #f8faff;
+            border-radius: 28px;
+            padding: 18px 16px 10px;
+            box-shadow: inset 0 2px 8px rgba(0,0,0,0.02), 0 8px 18px rgba(0,20,40,0.06);
+        }
+        .chart-box {
+            background: white;
+            border-radius: 20px;
+            padding: 6px 6px 0 6px;
+            height: 290px;
+        }
+        #ghsChart {
+            width: 100% !important;
+            height: 100% !important;
+        }
+
+        /* kuis true/false */
+        .quiz-section {
+            margin-top: 30px;
+            background: #f2f8ff;
+            border-radius: 28px;
+            padding: 20px 26px 26px;
+            border: 1px solid rgba(60,110,160,0.08);
+        }
+        .quiz-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px 30px;
+            margin: 16px 0 14px;
+        }
+        .quiz-item {
+            background: white;
+            border-radius: 60px;
+            padding: 6px 12px 6px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+            border: 1px solid #e2ebf6;
+        }
+        .quiz-item span { font-size: 0.9rem; font-weight: 500; color: #0b2a44; }
+        .quiz-item .tf-group {
+            display: flex;
+            gap: 6px;
+        }
+        .quiz-item .tf-group button {
+            background: #eef3fa;
+            border: none;
+            padding: 4px 16px;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 0.8rem;
+            color: #1a3d5e;
+            cursor: pointer;
+            transition: 0.1s;
+            border: 1px solid transparent;
+        }
+        .quiz-item .tf-group button.active-true {
+            background: #1c6b3f;
+            color: white;
+            border-color: #1c6b3f;
+        }
+        .quiz-item .tf-group button.active-false {
+            background: #b13e3e;
+            color: white;
+            border-color: #b13e3e;
+        }
+        .quiz-item .tf-group button:hover { background: #d0deee; }
+        .quiz-actions {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            align-items: center;
+            margin-top: 10px;
+        }
+        .btn-save {
+            background: #1f5a3e;
+            color: white;
+            border: none;
+            padding: 10px 32px;
+            border-radius: 60px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            box-shadow: 0 6px 14px rgba(20,80,50,0.2);
+            transition: 0.2s;
+        }
+        .btn-save:hover { background: #12442e; transform: scale(0.97); }
+        .btn-save:disabled { opacity: 0.5; pointer-events: none; }
+        .toast-msg {
+            background: #1f3f60;
+            color: white;
+            padding: 8px 22px;
+            border-radius: 60px;
+            font-size: 0.9rem;
+        }
+        .flex-row { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; }
+        @media (max-width: 880px) { .grid-2col { grid-template-columns: 1fr; } }
+        @media (max-width: 550px) { .quiz-grid { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+<div class="main-container">
+    <h1>
+        ⚡ Gerak Harmonik Sederhana
+        <small>pegas · massa · grafik</small>
+    </h1>
+
+    <div class="grid-2col">
+        <!-- Kiri: Simulasi -->
+        <div class="sim-panel">
+            <div class="canvas-wrapper">
+                <canvas id="simCanvas" width="400" height="300"></canvas>
+            </div>
+            <!-- kontrol -->
+            <div class="control-grid">
+                <div class="control-item">
+                    <label>massa <span class="value-badge" id="massaVal">0.8 kg</span></label>
+                    <input type="range" id="massaSlider" min="0.3" max="2.0" step="0.05" value="0.8">
+                </div>
+                <div class="control-item">
+                    <label>konstanta k <span class="value-badge" id="kVal">12 N/m</span></label>
+                    <input type="range" id="kSlider" min="4" max="28" step="0.5" value="12">
+                </div>
+                <div class="control-item">
+                    <label>gravitasi g <span class="value-badge" id="gVal">9.8 m/s²</span></label>
+                    <input type="range" id="gSlider" min="1" max="20" step="0.2" value="9.8">
+                </div>
+                <div class="control-item" style="justify-content: center;">
+                    <div class="toggle-group">
+                        <label><input type="checkbox" id="frictionCheck"> gesekan udara</label>
+                    </div>
+                    <button class="btn-reset" id="resetBtn">↺ reset posisi</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Kanan: Grafik -->
+        <div class="chart-panel">
+            <div class="chart-box">
+                <canvas id="ghsChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- KUIS True/False -->
+    <div class="quiz-section">
+        <div style="display: flex; justify-content: space-between; flex-wrap: wrap; align-items: center;">
+            <h3 style="margin:0; color:#0b2a44;">📝 Kuis GHS · True / False</h3>
+            <span style="font-size:0.8rem; color:#2f5a7a;">Jawaban tersimpan ke Google Sheets</span>
+        </div>
+        <div class="quiz-grid" id="quizContainer">
+            <!-- 5 pertanyaan akan diisi JS -->
+        </div>
+        <div class="quiz-actions">
+            <button class="btn-save" id="saveQuizBtn"><i class="fas fa-save" style="margin-right:8px;"></i>Simpan Jawaban ke Sheets</button>
+            <span id="toastMsg" class="toast-msg" style="background: #eef3fa; color:#1a3d5e;">⬤ siap</span>
+        </div>
+    </div>
+</div>
+
+<script>
+    (function(){
+        // ----- INISIALISASI CANVAS SIMULASI -----
+        const canvas = document.getElementById('simCanvas');
+        const ctx = canvas.getContext('2d');
+        const W = 400, H = 300;
+        canvas.width = W; canvas.height = H;
+
+        // ----- VARIABEL FISIKA -----
+        let params = {
+            m: 0.8,        // kg
+            k: 12,         // N/m
+            g: 9.8,        // m/s²
+            friction: false,
+        };
+        // state gerak
+        let state = {
+            y: 0.0,        // simpangan dari posisi setimbang (m)
+            v: 0.0,
+            t: 0,
+        };
+        // posisi setimbang (dipengaruhi gravitasi) di canvas: y=0 -> di tengah
+        const equilibriumY = 140;   // pixel (posisi massa saat setimbang)
+        const massRadius = 20;
+        // skala: 1 m = 60 pixel (agar gerak terlihat)
+        const scale = 60; // px per meter
+
+        // ----- DATA GRAFIK (history) -----
+        const maxDataPoints = 140;
+        let history = { t: [], x: [], v: [], a: [] };
+
+        // ----- CHART.JS -----
+        const chartCtx = document.getElementById('ghsChart').getContext('2d');
+        let ghsChart = new Chart(chartCtx, {
+            type: 'line',
+            data: {
+                labels: [],
+                datasets: [
+                    { label: 'perpindahan (m)', data: [], borderColor: '#1f6da9', backgroundColor: 'rgba(31,109,169,0.05)', borderWidth: 2.5, pointRadius: 0, tension: 0.3 },
+                    { label: 'kecepatan (m/s)', data: [], borderColor: '#c47b2e', borderWidth: 2.2, pointRadius: 0, tension: 0.3, borderDash: [5,3] },
+                    { label: 'percepatan (m/s²)', data: [], borderColor: '#b13e5a', borderWidth: 2.2, pointRadius: 0, tension: 0.3, borderDash: [2,4] }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                animation: false,
+                plugins: { legend: { display: true, labels: { boxWidth:12, font: { size:10 } } } },
+                scales: { y: { grid: { color: '#e2eaf2' } }, x: { grid: { display: false } } }
+            }
+        });
+
+        // ----- SLIDER & LABEL -----
+        const massaSlider = document.getElementById('massaSlider');
+        const kSlider = document.getElementById('kSlider');
+        const gSlider = document.getElementById('gSlider');
+        const massaVal = document.getElementById('massaVal');
+        const kVal = document.getElementById('kVal');
+        const gVal = document.getElementById('gVal');
+        const frictionCheck = document.getElementById('frictionCheck');
+
+        function updateLabels() {
+            params.m = parseFloat(massaSlider.value);
+            params.k = parseFloat(kSlider.value);
+            params.g = parseFloat(gSlider.value);
+            params.friction = frictionCheck.checked;
+            massaVal.textContent = params.m.toFixed(2) + ' kg';
+            kVal.textContent = params.k.toFixed(1) + ' N/m';
+            gVal.textContent = params.g.toFixed(1) + ' m/s²';
+        }
+        massaSlider.addEventListener('input', updateLabels);
+        kSlider.addEventListener('input', updateLabels);
+        gSlider.addEventListener('input', updateLabels);
+        frictionCheck.addEventListener('change', updateLabels);
+        updateLabels();
+
+        // ----- RESET posisi (beri simpangan awal) -----
+        function resetPosisi() {
+            state.y = 0.18;        // 18 cm
+            state.v = 0.0;
+            state.t = 0;
+            // kosongkan history, masukkan data awal
+            history = { t: [0], x: [state.y], v: [0], a: [ (-params.k/params.m)*state.y ] };
+            updateChart();
+        }
+        document.getElementById('resetBtn').addEventListener('click', resetPosisi);
+
+        // ----- SIMULASI (Euler-Cromer) -----
+        function stepPhysics(dt) {
+            if (dt > 0.03) dt = 0.03;
+            // percepatan: a = -(k/m)*y   (gravitasi hanya menggeser setimbang, tidak mempengaruhi dinamika)
+            let a = -(params.k / params.m) * state.y;
+            // gesekan udara: redaman linier -b*v, b kecil
+            if (params.friction) {
+                const b = 0.8;  // koef redaman
+                a += -b * state.v / params.m;
+            }
+            // Euler-Cromer: update v dulu, lalu y
+            state.v += a * dt;
+            state.y += state.v * dt;
+            state.t += dt;
+
+            // batasi agar tidak terlalu liar
+            if (Math.abs(state.y) > 0.5) {
+                state.y = Math.sign(state.y)*0.5;
+                state.v = -state.v*0.3;
+            }
+            // simpan history
+            history.t.push(state.t);
+            history.x.push(state.y);
+            history.v.push(state.v);
+            history.a.push(a);
+            if (history.t.length > maxDataPoints) {
+                history.t.shift(); history.x.shift(); history.v.shift(); history.a.shift();
+            }
+        }
+
+        // ----- GAMBAR SIMULASI + PENGARIS -----
+        function drawSim() {
+            ctx.clearRect(0, 0, W, H);
+            // latar belakang
+            ctx.fillStyle = '#fafdff';
+            ctx.fillRect(0,0,W,H);
+
+            // --- Penggaris (skala di samping kanan) ---
+            const rulerX = W - 42;
+            ctx.strokeStyle = '#1f3f60';
+            ctx.lineWidth = 1.8;
+            ctx.fillStyle = '#1f3f60';
+            ctx.font = 'bold 10px monospace';
+            // garis vertikal penggaris
+            ctx.beginPath();
+            ctx.moveTo(rulerX, 40);
+            ctx.lineTo(rulerX, H-25);
+            ctx.stroke();
+
+            // skala cm (dari -20 cm sampai +20 cm) -> posisi y dari 40 sampai 260
+            const minCm = -20, maxCm = 20;
+            for (let cm = minCm; cm <= maxCm; cm+=2) {
+                const yPos = equilibriumY - (cm/100)*scale; // karena 1m=60px
+                if (yPos < 35 || yPos > 275) continue;
+                const tickLen = (cm % 5 === 0) ? 10 : 5;
+                ctx.beginPath();
+                ctx.moveTo(rulerX - tickLen, yPos);
+                ctx.lineTo(rulerX, yPos);
+                ctx.strokeStyle = '#1f3f60';
+                ctx.lineWidth = 1.2;
+                ctx.stroke();
+                if (cm % 5 === 0) {
+                    ctx.fillStyle = '#1f3f60';
+                    ctx.fillText(cm+'cm', rulerX - 32, yPos+4);
+                }
+            }
+            // label "penggaris"
+            ctx.fillStyle = '#1f3f60';
+            ctx.font = 'bold 9px sans-serif';
+            ctx.fillText('penggaris', rulerX-30, 30);
+            // titik nol
+            ctx.fillStyle = '#b13e3e';
+            ctx.font = 'bold 10px sans-serif';
+            ctx.fillText('0', rulerX-20, equilibriumY+4);
+
+            // --- Gambar sistem pegas-massa ---
+            // titik gantung
+            const anchorX = 150, anchorY = 40;
+            // posisi massa (dalam pixel)
+            const massY = equilibriumY + state.y * scale;
+            // pegas (garis bergelombang)
+            ctx.beginPath();
+            ctx.moveTo(anchorX, anchorY);
+            const segs = 14;
+            const dy = (massY - anchorY) / segs;
+            let x = anchorX;
+            let y = anchorY;
+            for (let i=0; i<segs; i++) {
+                const nextY = anchorY + (i+1)*dy;
+                const offset = (i%2===0) ? 14 : -14;
+                ctx.lineTo(x + offset, y + dy/2);
+                y = nextY;
+            }
+            ctx.lineTo(anchorX, massY);
+            ctx.strokeStyle = '#1f3f60';
+            ctx.lineWidth = 3;
+            ctx.stroke();
+
+            // massa (lingkaran)
+            ctx.beginPath();
+            ctx.arc(anchorX, massY, massRadius, 0, Math.PI*2);
+            ctx.fillStyle = '#1f6da9';
+            ctx.shadowColor = 'rgba(0,0,0,0.08)';
+            ctx.shadowBlur = 12;
+            ctx.fill();
+            ctx.shadowBlur = 0;
+            ctx.strokeStyle = '#0f3a5e';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+            ctx.fillStyle = 'white';
+            ctx.font = 'bold 13px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText('m', anchorX, massY+5);
+
+            // keterangan posisi (simpangan)
+            ctx.fillStyle = '#0b2a44';
+            ctx.font = '12px sans-serif';
+            ctx.fillText('y = ' + (state.y*100).toFixed(1) + ' cm', 20, 40);
+            ctx.fillText('t = ' + state.t.toFixed(2) + ' s', 20, 60);
+            // tampilkan kecepatan
+            ctx.fillStyle = '#c47b2e';
+            ctx.fillText('v = ' + state.v.toFixed(2) + ' m/s', 20, 80);
+        }
+
+        // ----- UPDATE CHART -----
+        function updateChart() {
+            if (history.t.length === 0) return;
+            ghsChart.data.labels = history.t.map(t => t.toFixed(2));
+            ghsChart.data.datasets[0].data = history.x;
+            ghsChart.data.datasets[1].data = history.v;
+            ghsChart.data.datasets[2].data = history.a;
+            ghsChart.update('none');
+        }
+
+        // ----- LOOP ANIMASI -----
+        let lastTime = 0;
+        function animate(time) {
+            const dt = lastTime ? Math.min((time - lastTime)/1000, 0.032) : 0.016;
+            lastTime = time;
+            stepPhysics(dt);
+            drawSim();
+            updateChart();
+            requestAnimationFrame(animate);
+        }
+
+        // ----- KUIS (True/False) 5 pertanyaan -----
+        const quizData = [
+            { q: 'Pada GHS, percepatan sebanding dengan simpangan dan arahnya berlawanan.', correct: true },
+            { q: 'Periode GHS bergantung pada amplitudo.', correct: false },
+            { q: 'Energi mekanik pada GHS tanpa gesekan adalah kekal.', correct: true },
+            { q: 'Semakin besar konstanta pegas, semakin kecil frekuensi GHS.', correct: false },
+            { q: 'Kecepatan maksimum terjadi saat simpangan nol (posisi setimbang).', correct: true }
+        ];
+        const quizContainer = document.getElementById('quizContainer');
+        let quizAnswers = []; // true/false per index
+
+        function renderQuiz() {
+            quizContainer.innerHTML = '';
+            quizData.forEach((item, idx) => {
+                const div = document.createElement('div');
+                div.className = 'quiz-item';
+                const span = document.createElement('span');
+                span.textContent = (idx+1)+'. '+item.q;
+                const group = document.createElement('div');
+                group.className = 'tf-group';
+                const btnT = document.createElement('button');
+                btnT.textContent = 'Benar';
+                btnT.dataset.idx = idx; btnT.dataset.val = 'true';
+                const btnF = document.createElement('button');
+                btnF.textContent = 'Salah';
+                btnF.dataset.idx = idx; btnF.dataset.val = 'false';
+                // set active jika sudah dipilih
+                if (quizAnswers[idx] === true) btnT.classList.add('active-true');
+                if (quizAnswers[idx] === false) btnF.classList.add('active-false');
+
+                btnT.addEventListener('click', function() {
+                    const i = parseInt(this.dataset.idx);
+                    quizAnswers[i] = true;
+                    renderQuiz();
+                });
+                btnF.addEventListener('click', function() {
+                    const i = parseInt(this.dataset.idx);
+                    quizAnswers[i] = false;
+                    renderQuiz();
+                });
+                group.append(btnT, btnF);
+                div.append(span, group);
+                quizContainer.appendChild(div);
+            });
+        }
+        // inisialisasi jawaban kosong
+        quizAnswers = quizData.map(() => null);
+        renderQuiz();
+
+        // ----- SIMPAN KE GOOGLE SHEETS (via Web App) -----
+        const saveBtn = document.getElementById('saveQuizBtn');
+        const toast = document.getElementById('toastMsg');
+
+        // Ganti URL_DEPLOY dengan URL Web App Anda
+        const SHEETS_WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbzT5X5MkX6bNxZ_H5YdWxgT9KjLQ1vD3P_6r8s/exec'; 
+
+        async function saveToSheets() {
+            // cek apakah semua sudah dijawab
+            const unanswered = quizAnswers.some(a => a === null);
+            if (unanswered) {
+                toast.textContent = '⚠️ Jawab semua pertanyaan terlebih dahulu!';
+                toast.style.background = '#b13e3e';
+                toast.style.color = 'white';
+                return;
+            }
+            // siapkan data
+            const payload = {
+                timestamp: new Date().toISOString(),
+                answers: quizAnswers.map((val, i) => ({ 
+                    question: quizData[i].q, 
+                    answer: val ? 'Benar' : 'Salah',
+                    correct: quizData[i].correct
+                })),
+                summary: quizAnswers.map((v,i) => v === quizData[i].correct ? '✔' : '✘').join(' ')
+            };
+            toast.textContent = '⏳ mengirim...';
+            toast.style.background = '#f0c674';
+            toast.style.color = '#1a2a40';
+            saveBtn.disabled = true;
+            try {
+                const response = await fetch(SHEETS_WEBAPP_URL, {
+                    method: 'POST',
+                    mode: 'no-cors', // karena kita tidak perlu response detail, cukup kirim
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                // mode no-cors, response opaque, kita anggap sukses
+                toast.textContent = '✅ Jawaban tersimpan di Google Sheets!';
+                toast.style.background = '#1f6d4a';
+                toast.style.color = 'white';
+            } catch(e) {
+                toast.textContent = '❌ Gagal simpan (periksa URL Web App)';
+                toast.style.background = '#b13e3e';
+                toast.style.color = 'white';
+                console.error(e);
+            }
+            saveBtn.disabled = false;
+            // reset toast setelah 5s
+            setTimeout(() => {
+                toast.textContent = '⬤ siap';
+                toast.style.background = '#eef3fa';
+                toast.style.color = '#1a3d5e';
+            }, 4000);
+        }
+        saveBtn.addEventListener('click', saveToSheets);
+
+        // ----- START SIMULASI -----
+        resetPosisi(); // set initial
+        requestAnimationFrame(animate);
+
+        // update slider labels on load
+        updateLabels();
+
+        // reset posisi saat parameter berubah (opsional)
+        [massaSlider, kSlider, gSlider, frictionCheck].forEach(el => {
+            el.addEventListener('change', function() {
+                // tidak mereset otomatis, biarkan pengguna mereset manual
+                updateLabels();
+            });
+        });
+
+        // tambahan: tombol reset juga update chart
+        window.resetPosisi = resetPosisi;
+    })();
+</script>
+<!-- Font Awesome untuk ikon (optional) -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</body>
+</html>
