@@ -1,1 +1,331 @@
-Selamat datang
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Stefanus Setiawan · Guru Fisika</title>
+  <!-- Google Fonts & Font Awesome untuk gaya premium -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,600;14..32,700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: radial-gradient(circle at 20% 30%, #eef5ff, #d4e0f0);
+      font-family: 'Inter', sans-serif;
+      padding: 1.5rem;
+    }
+
+    /* Kartu utama – kesan mewah & bersih */
+    .profile-card {
+      max-width: 780px;
+      width: 100%;
+      background: rgba(255, 255, 255, 0.75);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-radius: 3rem 3rem 3rem 3rem;
+      box-shadow: 0 30px 60px rgba(0, 20, 40, 0.20), 0 10px 25px rgba(0, 0, 0, 0.05);
+      padding: 2.8rem 2.8rem 3.2rem;
+      transition: transform 0.25s ease, box-shadow 0.3s ease;
+      border: 1px solid rgba(255, 255, 255, 0.5);
+      text-align: center;
+    }
+
+    .profile-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 40px 70px rgba(0, 30, 60, 0.25);
+    }
+
+    /* elemen dekoratif ikon fisika */
+    .icon-ornament {
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      background: linear-gradient(145deg, #2b3f5c, #1a2a40);
+      color: #f0f7ff;
+      font-size: 2.4rem;
+      width: 80px;
+      height: 80px;
+      border-radius: 30px 10px 30px 10px;
+      margin-bottom: 1.2rem;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+      transition: 0.3s;
+    }
+
+    .profile-card:hover .icon-ornament {
+      transform: rotate(4deg) scale(1.02);
+      background: linear-gradient(145deg, #1f334d, #0f1f33);
+    }
+
+    .badge-nama {
+      display: inline-block;
+      background: rgba(30, 50, 80, 0.08);
+      backdrop-filter: blur(4px);
+      padding: 0.3rem 1.8rem;
+      border-radius: 40px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 1.5px;
+      color: #1a2a40;
+      border: 1px solid rgba(255,255,255,0.6);
+      margin-bottom: 0.8rem;
+    }
+
+    h1 {
+      font-size: 3.8rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: #0b1a2e;
+      margin: 0.2rem 0 0.4rem;
+      line-height: 1.1;
+    }
+
+    .nama-highlight {
+      background: linear-gradient(135deg, #1f3a5e, #0f2a4a);
+      background-clip: text;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      display: inline-block;
+    }
+
+    .sub-judul {
+      font-size: 1.4rem;
+      font-weight: 400;
+      color: #1d334c;
+      background: rgba(255, 255, 255, 0.6);
+      backdrop-filter: blur(4px);
+      display: inline-block;
+      padding: 0.4rem 2.2rem;
+      border-radius: 60px;
+      margin: 0.2rem 0 1.5rem;
+      border: 1px solid rgba(255,255,255,0.7);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+    }
+
+    .sub-judul i {
+      margin-right: 10px;
+      color: #2c4a6e;
+      -webkit-text-fill-color: #2c4a6e;
+    }
+
+    .profesi-badge {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+      margin: 1.8rem 0 2rem;
+    }
+
+    .chip {
+      background: rgba(255, 255, 255, 0.7);
+      backdrop-filter: blur(4px);
+      padding: 0.6rem 1.8rem;
+      border-radius: 60px;
+      font-size: 1rem;
+      font-weight: 500;
+      color: #0b1a2e;
+      border: 1px solid rgba(255,255,255,0.9);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.02);
+      letter-spacing: 0.3px;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .chip i {
+      color: #2a4b74;
+      font-size: 1.2rem;
+    }
+
+    .divider-custom {
+      width: 100px;
+      height: 4px;
+      background: linear-gradient(90deg, #1f3a5e, #7f9fc7, #1f3a5e);
+      margin: 1.2rem auto 1.8rem;
+      border-radius: 8px;
+      opacity: 0.5;
+    }
+
+    .quote-fisika {
+      font-size: 1.1rem;
+      font-weight: 300;
+      color: #1c314b;
+      background: rgba(255, 255, 255, 0.4);
+      padding: 0.8rem 1.8rem;
+      border-radius: 80px;
+      backdrop-filter: blur(4px);
+      display: inline-block;
+      border: 1px solid rgba(255,255,255,0.3);
+      margin-bottom: 0.5rem;
+      font-style: italic;
+    }
+
+    .quote-fisika i {
+      color: #2a4b74;
+      margin: 0 6px;
+    }
+
+    .social-mini {
+      margin-top: 2rem;
+      display: flex;
+      justify-content: center;
+      gap: 1.8rem;
+      flex-wrap: wrap;
+    }
+
+    .social-mini a {
+      color: #1f3a5e;
+      background: rgba(255, 255, 255, 0.5);
+      backdrop-filter: blur(4px);
+      width: 48px;
+      height: 48px;
+      border-radius: 30px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      text-decoration: none;
+      font-size: 1.5rem;
+      transition: all 0.2s ease;
+      border: 1px solid rgba(255,255,255,0.5);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.02);
+    }
+
+    .social-mini a:hover {
+      background: #1f3a5e;
+      color: white;
+      transform: scale(1.05) translateY(-3px);
+      border-color: #1f3a5e;
+      box-shadow: 0 10px 20px rgba(20, 50, 80, 0.2);
+    }
+
+    .footer-note {
+      margin-top: 2.2rem;
+      font-size: 0.9rem;
+      color: #2f4a6a;
+      opacity: 0.7;
+      font-weight: 300;
+      letter-spacing: 0.5px;
+      border-top: 1px solid rgba(255,255,255,0.4);
+      padding-top: 1.2rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .footer-note i {
+      font-size: 1rem;
+      color: #2a4b74;
+    }
+
+    /* responsif */
+    @media (max-width: 600px) {
+      .profile-card {
+        padding: 2rem 1.5rem;
+        border-radius: 2.5rem;
+      }
+      h1 {
+        font-size: 2.8rem;
+      }
+      .sub-judul {
+        font-size: 1.1rem;
+        padding: 0.3rem 1.5rem;
+      }
+      .icon-ornament {
+        width: 70px;
+        height: 70px;
+        font-size: 2rem;
+      }
+      .chip {
+        font-size: 0.9rem;
+        padding: 0.4rem 1.2rem;
+      }
+    }
+
+    @media (max-width: 450px) {
+      h1 {
+        font-size: 2.2rem;
+      }
+      .sub-judul {
+        font-size: 0.95rem;
+        padding: 0.2rem 1rem;
+      }
+      .profile-card {
+        padding: 1.5rem 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="profile-card">
+    
+    <!-- Ornamen ikon fisika + sapaan -->
+    <div class="icon-ornament">
+      <i class="fas fa-atom"></i>
+    </div>
+
+    <div class="badge-nama">
+      <i class="fas fa-user-astronaut" style="margin-right: 8px;"></i> perkenalan
+    </div>
+
+    <!-- Nama utama dengan efek gradasi -->
+    <h1>
+      <span class="nama-highlight">Stefanus Setiawan</span>
+    </h1>
+
+    <!-- Profesi dengan ikon -->
+    <div class="sub-judul">
+      <i class="fas fa-chalkboard-teacher"></i> Guru Fisika · Santa Laurensia
+    </div>
+
+    <!-- Divider dekoratif -->
+    <div class="divider-custom"></div>
+
+    <!-- Detail profesi + badge -->
+    <div class="profesi-badge">
+      <span class="chip">
+        <i class="fas fa-flask"></i> Fisika
+      </span>
+      <span class="chip">
+        <i class="fas fa-school"></i> SMA Santa Laurensia
+      </span>
+      <span class="chip">
+        <i class="fas fa-graduation-cap"></i> Pendidik
+      </span>
+    </div>
+
+    <!-- Kutipan inspiratif (sentuhan fisika) -->
+    <div class="quote-fisika">
+      <i class="fas fa-quote-left"></i> 
+      “Mengajarkan fisika adalah membuka tabir alam semesta”
+      <i class="fas fa-quote-right"></i>
+    </div>
+
+    <!-- Ikon sosial / kontak (hiasan) -->
+    <div class="social-mini">
+      <a href="#" aria-label="email"><i class="fas fa-envelope"></i></a>
+      <a href="#" aria-label="instagram"><i class="fab fa-instagram"></i></a>
+      <a href="#" aria-label="linkedin"><i class="fab fa-linkedin-in"></i></a>
+      <a href="#" aria-label="whatsapp"><i class="fab fa-whatsapp"></i></a>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer-note">
+      <i class="fas fa-arrow-right"></i> 
+      <span>Santa Laurensia · 2026</span>
+      <i class="fas fa-arrow-left"></i>
+    </div>
+  </div>
+</body>
+</html>
