@@ -27,7 +27,6 @@
             position: relative;
         }
 
-        /* Dekorasi latar belakang */
         body::before {
             content: '';
             position: fixed;
@@ -52,7 +51,6 @@
             align-items: stretch;
         }
 
-        /* Kartu kiri - Profil */
         .profile-card {
             background: rgba(255, 255, 255, 0.75);
             backdrop-filter: blur(12px);
@@ -252,7 +250,7 @@
             color: #2a4b74;
         }
 
-        /* Kartu kanan - Video Stream */
+        /* Video Card */
         .video-card {
             background: rgba(255, 255, 255, 0.75);
             backdrop-filter: blur(12px);
@@ -277,6 +275,8 @@
             align-items: center;
             margin-bottom: 1.2rem;
             padding: 0 0.5rem;
+            flex-wrap: wrap;
+            gap: 10px;
         }
 
         .video-header h2 {
@@ -346,7 +346,6 @@
             min-height: 350px;
         }
 
-        /* Bingkai dekoratif di sekitar video */
         .video-wrapper::before {
             content: '';
             position: absolute;
@@ -407,6 +406,7 @@
             gap: 12px;
             font-size: 0.85rem;
             color: #2f4a6a;
+            flex-wrap: wrap;
         }
 
         .status-dot {
@@ -420,22 +420,66 @@
 
         .status-dot.inactive {
             background: #e74c3c;
+            animation: none;
         }
 
-        /* Hiasan sudut */
+        .status-dot.warning {
+            background: #f39c12;
+            animation: pulse-dot 1s infinite;
+        }
+
         .corner-decor {
             position: absolute;
             width: 40px;
             height: 40px;
-            border: 3px solid rgba(31, 58, 94, 0.15);
+            border: 3px solid rgba(255, 255, 255, 0.2);
             pointer-events: none;
-            z-index: 0;
+            z-index: 2;
         }
 
         .corner-decor.tl { top: 10px; left: 10px; border-right: none; border-bottom: none; border-radius: 8px 0 0 0; }
         .corner-decor.tr { top: 10px; right: 10px; border-left: none; border-bottom: none; border-radius: 0 8px 0 0; }
         .corner-decor.bl { bottom: 10px; left: 10px; border-right: none; border-top: none; border-radius: 0 0 0 8px; }
         .corner-decor.br { bottom: 10px; right: 10px; border-left: none; border-top: none; border-radius: 0 0 8px 0; }
+
+        .video-placeholder {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            color: white;
+            padding: 2rem;
+            text-align: center;
+            gap: 16px;
+        }
+
+        .video-placeholder i {
+            font-size: 4rem;
+            opacity: 0.6;
+        }
+
+        .video-placeholder p {
+            opacity: 0.8;
+            font-size: 0.95rem;
+            max-width: 300px;
+        }
+
+        .video-placeholder .retry-btn {
+            background: rgba(255,255,255,0.15);
+            border: 1px solid rgba(255,255,255,0.3);
+            color: white;
+            padding: 8px 24px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+
+        .video-placeholder .retry-btn:hover {
+            background: rgba(255,255,255,0.25);
+            transform: scale(1.05);
+        }
 
         /* Responsif */
         @media (max-width: 1024px) {
@@ -557,20 +601,34 @@
                     Live Stream
                 </h2>
                 <div class="zoom-controls">
-                    <button class="zoom-btn" id="zoomOut" title="Zoom Out">−</button>
+                    <button class="zoom-btn" id="zoomOut" title="Zoom Out (Ctrl-)">−</button>
                     <span class="zoom-level" id="zoomLevel">1.0×</span>
-                    <button class="zoom-btn" id="zoomIn" title="Zoom In">+</button>
-                    <button class="zoom-btn" id="zoomReset" title="Reset Zoom" style="font-size:0.8rem;">⟲</button>
+                    <button class="zoom-btn" id="zoomIn" title="Zoom In (Ctrl+)">+</button>
+                    <button class="zoom-btn" id="zoomReset" title="Reset Zoom (Ctrl+0)" style="font-size:0.8rem;">⟲</button>
                 </div>
             </div>
 
             <div class="video-wrapper" id="videoWrapper">
+                <!-- Video element dengan fallback -->
                 <video id="videoStream" autoplay muted playsinline>
                     <source src="http://10.101.209.88" type="video/mp4">
                     <source src="http://10.101.209.88" type="video/webm">
                     <source src="http://10.101.209.88" type="video/ogg">
                     Browser Anda tidak mendukung video tag.
                 </video>
+                
+                <!-- Placeholder yang muncul saat video error -->
+                <div class="video-placeholder" id="videoPlaceholder" style="display: none;">
+                    <i class="fas fa-video-slash"></i>
+                    <p id="errorMessage">Tidak dapat terhubung ke stream video.<br>Pastikan perangkat terhubung ke jaringan yang sama.</p>
+                    <button class="retry-btn" id="retryBtn">
+                        <i class="fas fa-sync-alt"></i> Coba Lagi
+                    </button>
+                    <p style="font-size: 0.7rem; opacity: 0.5; margin-top: 8px;">
+                        <i class="fas fa-info-circle"></i> Alamat: 10.101.209.88
+                    </p>
+                </div>
+
                 <!-- Hiasan sudut -->
                 <div class="corner-decor tl"></div>
                 <div class="corner-decor tr"></div>
@@ -582,7 +640,12 @@
                 <span class="status-dot" id="statusDot"></span>
                 <span id="statusText">Menghubungkan ke stream...</span>
                 <span style="opacity:0.5;">|</span>
-                <span style="font-size:0.75rem; opacity:0.6;"><i class="fas fa-cog"></i> 10.101.209.88</span>
+                <span style="font-size:0.75rem; opacity:0.6;">
+                    <i class="fas fa-network-wired"></i> 10.101.209.88
+                </span>
+                <button id="forceReloadBtn" style="background: none; border: none; color: #2a4b74; cursor: pointer; font-size: 0.75rem; opacity: 0.5; text-decoration: underline;">
+                    <i class="fas fa-redo"></i> reload
+                </button>
             </div>
         </div>
     </div>
@@ -592,134 +655,195 @@
             const video = document.getElementById('videoStream');
             const statusDot = document.getElementById('statusDot');
             const statusText = document.getElementById('statusText');
+            const placeholder = document.getElementById('videoPlaceholder');
+            const errorMessage = document.getElementById('errorMessage');
+            const retryBtn = document.getElementById('retryBtn');
+            const forceReloadBtn = document.getElementById('forceReloadBtn');
 
-            // --- Zoom Control ---
-            let currentZoom = 1.0;
+            let zoomLevel = 1.0;
             const MIN_ZOOM = 0.5;
             const MAX_ZOOM = 2.5;
             const ZOOM_STEP = 0.1;
+            let retryCount = 0;
+            const MAX_RETRIES = 3;
+            let isError = false;
 
+            // --- Zoom Control ---
             const zoomInBtn = document.getElementById('zoomIn');
             const zoomOutBtn = document.getElementById('zoomOut');
             const zoomResetBtn = document.getElementById('zoomReset');
             const zoomLevelDisplay = document.getElementById('zoomLevel');
-            const videoWrapper = document.getElementById('videoWrapper');
 
             function applyZoom(zoom) {
-                currentZoom = Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, zoom));
-                video.style.setProperty('--zoom-level', currentZoom);
+                zoomLevel = Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, zoom));
+                video.style.setProperty('--zoom-level', zoomLevel);
                 video.classList.add('zoomed');
-                zoomLevelDisplay.textContent = currentZoom.toFixed(1) + '×';
+                zoomLevelDisplay.textContent = zoomLevel.toFixed(1) + '×';
             }
 
-            zoomInBtn.addEventListener('click', () => {
-                applyZoom(currentZoom + ZOOM_STEP);
-            });
+            zoomInBtn.addEventListener('click', () => applyZoom(zoomLevel + ZOOM_STEP));
+            zoomOutBtn.addEventListener('click', () => applyZoom(zoomLevel - ZOOM_STEP));
+            zoomResetBtn.addEventListener('click', () => applyZoom(1.0));
 
-            zoomOutBtn.addEventListener('click', () => {
-                applyZoom(currentZoom - ZOOM_STEP);
-            });
-
-            zoomResetBtn.addEventListener('click', () => {
-                applyZoom(1.0);
-            });
-
-            // Inisialisasi zoom
-            applyZoom(1.0);
-
-            // --- Video status monitoring ---
-            function updateStatus(connected) {
-                if (connected) {
-                    statusDot.className = 'status-dot';
-                    statusText.textContent = 'Stream aktif';
-                } else {
-                    statusDot.className = 'status-dot inactive';
-                    statusText.textContent = 'Mencoba menghubungkan...';
-                }
-            }
-
-            // Event listener untuk video
-            video.addEventListener('loadeddata', () => {
-                updateStatus(true);
-            });
-
-            video.addEventListener('error', () => {
-                updateStatus(false);
-                statusText.textContent = 'Gagal terhubung ke stream';
-            });
-
-            video.addEventListener('stalled', () => {
-                updateStatus(false);
-                statusText.textContent = 'Stream tertunda...';
-            });
-
-            video.addEventListener('playing', () => {
-                updateStatus(true);
-            });
-
-            video.addEventListener('waiting', () => {
-                updateStatus(false);
-                statusText.textContent = 'Memuat stream...';
-            });
-
-            // Coba reload video jika gagal
-            let retryCount = 0;
-            const MAX_RETRIES = 5;
-
-            video.addEventListener('error', function onError() {
-                if (retryCount < MAX_RETRIES) {
-                    retryCount++;
-                    setTimeout(() => {
-                        video.load();
-                    }, 3000);
-                } else {
-                    statusText.textContent = 'Tidak dapat terhubung ke stream';
-                }
-            });
-
-            // Coba mulai dengan status menunggu
-            updateStatus(false);
-            statusText.textContent = 'Menghubungkan ke stream...';
-
-            // Jika video gagal dimuat setelah 5 detik, tampilkan pesan
-            setTimeout(() => {
-                if (video.readyState === 0) {
-                    statusText.textContent = 'Stream tidak tersedia';
-                    statusDot.className = 'status-dot inactive';
-                }
-            }, 5000);
-
-            // --- Keyboard shortcut untuk zoom ---
             document.addEventListener('keydown', (e) => {
                 if (e.ctrlKey && (e.key === '=' || e.key === '+')) {
                     e.preventDefault();
-                    applyZoom(currentZoom + ZOOM_STEP);
+                    applyZoom(zoomLevel + ZOOM_STEP);
                 } else if (e.ctrlKey && e.key === '-') {
                     e.preventDefault();
-                    applyZoom(currentZoom - ZOOM_STEP);
+                    applyZoom(zoomLevel - ZOOM_STEP);
                 } else if (e.ctrlKey && e.key === '0') {
                     e.preventDefault();
                     applyZoom(1.0);
                 }
             });
 
-            // --- Tooltip untuk zoom controls ---
-            const zoomBtns = document.querySelectorAll('.zoom-btn');
-            zoomBtns.forEach(btn => {
-                btn.setAttribute('aria-label', btn.id === 'zoomIn' ? 'Perbesar (Ctrl+)' : 
-                                              btn.id === 'zoomOut' ? 'Perkecil (Ctrl-)' : 
-                                              'Reset zoom (Ctrl+0)');
+            applyZoom(1.0);
+
+            // --- Video Status Management ---
+            function setStatus(state, message) {
+                statusDot.className = 'status-dot';
+                if (state === 'connected') {
+                    statusDot.classList.remove('inactive', 'warning');
+                    statusText.textContent = message || 'Stream aktif';
+                } else if (state === 'warning') {
+                    statusDot.classList.add('warning');
+                    statusDot.classList.remove('inactive');
+                    statusText.textContent = message || 'Menghubungkan...';
+                } else {
+                    statusDot.classList.add('inactive');
+                    statusDot.classList.remove('warning');
+                    statusText.textContent = message || 'Tidak terhubung';
+                }
+            }
+
+            function showError(message) {
+                isError = true;
+                placeholder.style.display = 'flex';
+                video.style.display = 'none';
+                errorMessage.textContent = message || 'Tidak dapat terhubung ke stream video.';
+                setStatus('error', 'Gagal terhubung');
+            }
+
+            function hideError() {
+                isError = false;
+                placeholder.style.display = 'none';
+                video.style.display = 'block';
+            }
+
+            function loadVideo() {
+                hideError();
+                setStatus('warning', 'Memuat stream...');
+                video.load();
+                
+                // Set timeout untuk deteksi kegagalan
+                const loadTimeout = setTimeout(() => {
+                    if (video.readyState === 0 && !isError) {
+                        showError('Stream tidak merespons. Pastikan server aktif dan perangkat terhubung ke jaringan yang sama.');
+                    }
+                }, 8000);
+
+                video.addEventListener('loadeddata', function onLoaded() {
+                    clearTimeout(loadTimeout);
+                    if (!isError) {
+                        setStatus('connected', 'Stream aktif');
+                    }
+                    video.removeEventListener('loadeddata', onLoaded);
+                }, { once: true });
+            }
+
+            // --- Video Event Listeners ---
+            video.addEventListener('playing', () => {
+                if (!isError) {
+                    setStatus('connected', 'Stream aktif');
+                }
             });
 
-            console.log('🎥 Video Stream berhasil dimuat, zoom tersedia!');
+            video.addEventListener('waiting', () => {
+                if (!isError) {
+                    setStatus('warning', 'Memuat stream...');
+                }
+            });
+
+            video.addEventListener('stalled', () => {
+                if (!isError) {
+                    setStatus('warning', 'Stream tertunda...');
+                }
+            });
+
+            video.addEventListener('error', (e) => {
+                const error = e.target.error;
+                let msg = 'Gagal memuat stream video.';
+                
+                if (error) {
+                    switch(error.code) {
+                        case MediaError.MEDIA_ERR_ABORTED:
+                            msg = 'Pemutaran dibatalkan.';
+                            break;
+                        case MediaError.MEDIA_ERR_NETWORK:
+                            msg = 'Gagal terhubung ke server. Pastikan perangkat terhubung ke jaringan yang sama (10.101.209.88).';
+                            break;
+                        case MediaError.MEDIA_ERR_DECODE:
+                            msg = 'Format video tidak didukung.';
+                            break;
+                        case MediaError.MEDIA_ERR_SRC_NOT_SUPPORTED:
+                            msg = 'URL stream tidak valid atau tidak didukung.';
+                            break;
+                        default:
+                            msg = 'Terjadi kesalahan tidak dikenal.';
+                    }
+                }
+                
+                // Coba reload beberapa kali
+                if (retryCount < MAX_RETRIES) {
+                    retryCount++;
+                    setStatus('warning', `Mencoba ulang (${retryCount}/${MAX_RETRIES})...`);
+                    setTimeout(() => {
+                        loadVideo();
+                    }, 3000);
+                } else {
+                    showError(msg + ' Silakan coba refresh halaman atau periksa koneksi jaringan.');
+                }
+            });
+
+            // --- Retry Button ---
+            retryBtn.addEventListener('click', () => {
+                retryCount = 0;
+                loadVideo();
+            });
+
+            forceReloadBtn.addEventListener('click', () => {
+                retryCount = 0;
+                loadVideo();
+            });
+
+            // --- Initial Load ---
+            // Cek apakah video bisa dimuat
+            setStatus('warning', 'Menghubungkan ke stream...');
+            
+            // Gunakan fetch untuk mengecek koneksi terlebih dahulu (mengatasi CORS)
+            fetch('http://10.101.209.88', { 
+                method: 'HEAD',
+                mode: 'no-cors'
+            }).catch(() => {
+                // Gagal fetch, tapi masih bisa mencoba video
+                console.log('Fetch ke stream gagal (CORS), mencoba video langsung...');
+            });
+
+            // Mulai load video
+            setTimeout(() => {
+                loadVideo();
+            }, 500);
+
+            // Fallback: jika setelah 10 detik masih tidak ada progress
+            setTimeout(() => {
+                if (video.readyState === 0 && !isError) {
+                    showError('Stream tidak merespons. Pastikan:\n• Perangkat terhubung ke jaringan yang sama\n• Server stream aktif di 10.101.209.88\n• CORS diizinkan');
+                }
+            }, 10000);
+
+            console.log('🎥 Video Stream dengan fallback dan zoom siap');
         })();
     </script>
-
-    <!-- Fallback jika video tidak bisa dimuat dengan tag source, coba gunakan img atau pesan -->
-    <noscript>
-        <div style="background: #ff6b6b; color: white; padding: 1rem; border-radius: 12px; text-align: center;">
-            JavaScript diperlukan untuk kontrol zoom dan status stream.
-        </div>
-    </noscript>
 </body>
 </html>
