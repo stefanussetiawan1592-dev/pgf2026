@@ -1,331 +1,725 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Stefanus Setiawan · Guru Fisika</title>
-  <!-- Google Fonts & Font Awesome untuk gaya premium -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,600;14..32,700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stefanus Setiawan · Guru Fisika</title>
+    <!-- Google Fonts & Font Awesome -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,600;14..32,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-    body {
-      min-height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      background: radial-gradient(circle at 20% 30%, #eef5ff, #d4e0f0);
-      font-family: 'Inter', sans-serif;
-      padding: 1.5rem;
-    }
+        body {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: radial-gradient(circle at 20% 30%, #eef5ff, #d4e0f0);
+            font-family: 'Inter', sans-serif;
+            padding: 1.5rem;
+            position: relative;
+        }
 
-    /* Kartu utama – kesan mewah & bersih */
-    .profile-card {
-      max-width: 780px;
-      width: 100%;
-      background: rgba(255, 255, 255, 0.75);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      border-radius: 3rem 3rem 3rem 3rem;
-      box-shadow: 0 30px 60px rgba(0, 20, 40, 0.20), 0 10px 25px rgba(0, 0, 0, 0.05);
-      padding: 2.8rem 2.8rem 3.2rem;
-      transition: transform 0.25s ease, box-shadow 0.3s ease;
-      border: 1px solid rgba(255, 255, 255, 0.5);
-      text-align: center;
-    }
+        /* Dekorasi latar belakang */
+        body::before {
+            content: '';
+            position: fixed;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at 70% 80%, rgba(31, 109, 169, 0.03) 0%, transparent 50%),
+                        radial-gradient(circle at 20% 20%, rgba(31, 109, 169, 0.05) 0%, transparent 40%);
+            pointer-events: none;
+            z-index: 0;
+        }
 
-    .profile-card:hover {
-      transform: translateY(-6px);
-      box-shadow: 0 40px 70px rgba(0, 30, 60, 0.25);
-    }
+        .main-wrapper {
+            max-width: 1400px;
+            width: 100%;
+            position: relative;
+            z-index: 1;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            align-items: stretch;
+        }
 
-    /* elemen dekoratif ikon fisika */
-    .icon-ornament {
-      display: inline-flex;
-      justify-content: center;
-      align-items: center;
-      background: linear-gradient(145deg, #2b3f5c, #1a2a40);
-      color: #f0f7ff;
-      font-size: 2.4rem;
-      width: 80px;
-      height: 80px;
-      border-radius: 30px 10px 30px 10px;
-      margin-bottom: 1.2rem;
-      box-shadow: 0 8px 16px rgba(0,0,0,0.1);
-      transition: 0.3s;
-    }
+        /* Kartu kiri - Profil */
+        .profile-card {
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-radius: 3rem 3rem 3rem 3rem;
+            box-shadow: 0 30px 60px rgba(0, 20, 40, 0.20), 0 10px 25px rgba(0, 0, 0, 0.05);
+            padding: 2.8rem 2.8rem 3.2rem;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            text-align: center;
+            transition: transform 0.25s ease, box-shadow 0.3s ease;
+        }
 
-    .profile-card:hover .icon-ornament {
-      transform: rotate(4deg) scale(1.02);
-      background: linear-gradient(145deg, #1f334d, #0f1f33);
-    }
+        .profile-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 40px 70px rgba(0, 30, 60, 0.25);
+        }
 
-    .badge-nama {
-      display: inline-block;
-      background: rgba(30, 50, 80, 0.08);
-      backdrop-filter: blur(4px);
-      padding: 0.3rem 1.8rem;
-      border-radius: 40px;
-      font-size: 0.8rem;
-      font-weight: 600;
-      letter-spacing: 1.5px;
-      color: #1a2a40;
-      border: 1px solid rgba(255,255,255,0.6);
-      margin-bottom: 0.8rem;
-    }
+        .icon-ornament {
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(145deg, #2b3f5c, #1a2a40);
+            color: #f0f7ff;
+            font-size: 2.4rem;
+            width: 80px;
+            height: 80px;
+            border-radius: 30px 10px 30px 10px;
+            margin-bottom: 1.2rem;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+            transition: 0.3s;
+        }
 
-    h1 {
-      font-size: 3.8rem;
-      font-weight: 700;
-      letter-spacing: -0.02em;
-      color: #0b1a2e;
-      margin: 0.2rem 0 0.4rem;
-      line-height: 1.1;
-    }
+        .profile-card:hover .icon-ornament {
+            transform: rotate(4deg) scale(1.02);
+            background: linear-gradient(145deg, #1f334d, #0f1f33);
+        }
 
-    .nama-highlight {
-      background: linear-gradient(135deg, #1f3a5e, #0f2a4a);
-      background-clip: text;
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      display: inline-block;
-    }
+        .badge-nama {
+            display: inline-block;
+            background: rgba(30, 50, 80, 0.08);
+            backdrop-filter: blur(4px);
+            padding: 0.3rem 1.8rem;
+            border-radius: 40px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            letter-spacing: 1.5px;
+            color: #1a2a40;
+            border: 1px solid rgba(255,255,255,0.6);
+            margin-bottom: 0.8rem;
+        }
 
-    .sub-judul {
-      font-size: 1.4rem;
-      font-weight: 400;
-      color: #1d334c;
-      background: rgba(255, 255, 255, 0.6);
-      backdrop-filter: blur(4px);
-      display: inline-block;
-      padding: 0.4rem 2.2rem;
-      border-radius: 60px;
-      margin: 0.2rem 0 1.5rem;
-      border: 1px solid rgba(255,255,255,0.7);
-      box-shadow: 0 2px 8px rgba(0,0,0,0.02);
-    }
+        h1 {
+            font-size: 3.8rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            color: #0b1a2e;
+            margin: 0.2rem 0 0.4rem;
+            line-height: 1.1;
+        }
 
-    .sub-judul i {
-      margin-right: 10px;
-      color: #2c4a6e;
-      -webkit-text-fill-color: #2c4a6e;
-    }
+        .nama-highlight {
+            background: linear-gradient(135deg, #1f3a5e, #0f2a4a);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: inline-block;
+        }
 
-    .profesi-badge {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 14px;
-      flex-wrap: wrap;
-      margin: 1.8rem 0 2rem;
-    }
+        .sub-judul {
+            font-size: 1.4rem;
+            font-weight: 400;
+            color: #1d334c;
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(4px);
+            display: inline-block;
+            padding: 0.4rem 2.2rem;
+            border-radius: 60px;
+            margin: 0.2rem 0 1.5rem;
+            border: 1px solid rgba(255,255,255,0.7);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+        }
 
-    .chip {
-      background: rgba(255, 255, 255, 0.7);
-      backdrop-filter: blur(4px);
-      padding: 0.6rem 1.8rem;
-      border-radius: 60px;
-      font-size: 1rem;
-      font-weight: 500;
-      color: #0b1a2e;
-      border: 1px solid rgba(255,255,255,0.9);
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.02);
-      letter-spacing: 0.3px;
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-    }
+        .sub-judul i {
+            margin-right: 10px;
+            color: #2c4a6e;
+            -webkit-text-fill-color: #2c4a6e;
+        }
 
-    .chip i {
-      color: #2a4b74;
-      font-size: 1.2rem;
-    }
+        .profesi-badge {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 14px;
+            flex-wrap: wrap;
+            margin: 1.8rem 0 2rem;
+        }
 
-    .divider-custom {
-      width: 100px;
-      height: 4px;
-      background: linear-gradient(90deg, #1f3a5e, #7f9fc7, #1f3a5e);
-      margin: 1.2rem auto 1.8rem;
-      border-radius: 8px;
-      opacity: 0.5;
-    }
+        .chip {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(4px);
+            padding: 0.6rem 1.8rem;
+            border-radius: 60px;
+            font-size: 1rem;
+            font-weight: 500;
+            color: #0b1a2e;
+            border: 1px solid rgba(255,255,255,0.9);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.02);
+            letter-spacing: 0.3px;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
 
-    .quote-fisika {
-      font-size: 1.1rem;
-      font-weight: 300;
-      color: #1c314b;
-      background: rgba(255, 255, 255, 0.4);
-      padding: 0.8rem 1.8rem;
-      border-radius: 80px;
-      backdrop-filter: blur(4px);
-      display: inline-block;
-      border: 1px solid rgba(255,255,255,0.3);
-      margin-bottom: 0.5rem;
-      font-style: italic;
-    }
+        .chip i {
+            color: #2a4b74;
+            font-size: 1.2rem;
+        }
 
-    .quote-fisika i {
-      color: #2a4b74;
-      margin: 0 6px;
-    }
+        .divider-custom {
+            width: 100px;
+            height: 4px;
+            background: linear-gradient(90deg, #1f3a5e, #7f9fc7, #1f3a5e);
+            margin: 1.2rem auto 1.8rem;
+            border-radius: 8px;
+            opacity: 0.5;
+        }
 
-    .social-mini {
-      margin-top: 2rem;
-      display: flex;
-      justify-content: center;
-      gap: 1.8rem;
-      flex-wrap: wrap;
-    }
+        .quote-fisika {
+            font-size: 1.1rem;
+            font-weight: 300;
+            color: #1c314b;
+            background: rgba(255, 255, 255, 0.4);
+            padding: 0.8rem 1.8rem;
+            border-radius: 80px;
+            backdrop-filter: blur(4px);
+            display: inline-block;
+            border: 1px solid rgba(255,255,255,0.3);
+            margin-bottom: 0.5rem;
+            font-style: italic;
+        }
 
-    .social-mini a {
-      color: #1f3a5e;
-      background: rgba(255, 255, 255, 0.5);
-      backdrop-filter: blur(4px);
-      width: 48px;
-      height: 48px;
-      border-radius: 30px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      text-decoration: none;
-      font-size: 1.5rem;
-      transition: all 0.2s ease;
-      border: 1px solid rgba(255,255,255,0.5);
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.02);
-    }
+        .quote-fisika i {
+            color: #2a4b74;
+            margin: 0 6px;
+        }
 
-    .social-mini a:hover {
-      background: #1f3a5e;
-      color: white;
-      transform: scale(1.05) translateY(-3px);
-      border-color: #1f3a5e;
-      box-shadow: 0 10px 20px rgba(20, 50, 80, 0.2);
-    }
+        .social-mini {
+            margin-top: 2rem;
+            display: flex;
+            justify-content: center;
+            gap: 1.8rem;
+            flex-wrap: wrap;
+        }
 
-    .footer-note {
-      margin-top: 2.2rem;
-      font-size: 0.9rem;
-      color: #2f4a6a;
-      opacity: 0.7;
-      font-weight: 300;
-      letter-spacing: 0.5px;
-      border-top: 1px solid rgba(255,255,255,0.4);
-      padding-top: 1.2rem;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 10px;
-    }
+        .social-mini a {
+            color: #1f3a5e;
+            background: rgba(255, 255, 255, 0.5);
+            backdrop-filter: blur(4px);
+            width: 48px;
+            height: 48px;
+            border-radius: 30px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-decoration: none;
+            font-size: 1.5rem;
+            transition: all 0.2s ease;
+            border: 1px solid rgba(255,255,255,0.5);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.02);
+        }
 
-    .footer-note i {
-      font-size: 1rem;
-      color: #2a4b74;
-    }
+        .social-mini a:hover {
+            background: #1f3a5e;
+            color: white;
+            transform: scale(1.05) translateY(-3px);
+            border-color: #1f3a5e;
+            box-shadow: 0 10px 20px rgba(20, 50, 80, 0.2);
+        }
 
-    /* responsif */
-    @media (max-width: 600px) {
-      .profile-card {
-        padding: 2rem 1.5rem;
-        border-radius: 2.5rem;
-      }
-      h1 {
-        font-size: 2.8rem;
-      }
-      .sub-judul {
-        font-size: 1.1rem;
-        padding: 0.3rem 1.5rem;
-      }
-      .icon-ornament {
-        width: 70px;
-        height: 70px;
-        font-size: 2rem;
-      }
-      .chip {
-        font-size: 0.9rem;
-        padding: 0.4rem 1.2rem;
-      }
-    }
+        .footer-note {
+            margin-top: 2.2rem;
+            font-size: 0.9rem;
+            color: #2f4a6a;
+            opacity: 0.7;
+            font-weight: 300;
+            letter-spacing: 0.5px;
+            border-top: 1px solid rgba(255,255,255,0.4);
+            padding-top: 1.2rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
 
-    @media (max-width: 450px) {
-      h1 {
-        font-size: 2.2rem;
-      }
-      .sub-judul {
-        font-size: 0.95rem;
-        padding: 0.2rem 1rem;
-      }
-      .profile-card {
-        padding: 1.5rem 1rem;
-      }
-    }
-  </style>
+        .footer-note i {
+            font-size: 1rem;
+            color: #2a4b74;
+        }
+
+        /* Kartu kanan - Video Stream */
+        .video-card {
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-radius: 3rem 3rem 3rem 3rem;
+            box-shadow: 0 30px 60px rgba(0, 20, 40, 0.20), 0 10px 25px rgba(0, 0, 0, 0.05);
+            padding: 1.8rem 1.8rem 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            transition: transform 0.25s ease, box-shadow 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .video-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 40px 70px rgba(0, 30, 60, 0.25);
+        }
+
+        .video-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.2rem;
+            padding: 0 0.5rem;
+        }
+
+        .video-header h2 {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #0b1a2e;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .video-header h2 i {
+            color: #e74c3c;
+            font-size: 0.9rem;
+            animation: pulse-dot 1.5s infinite;
+        }
+
+        @keyframes pulse-dot {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.3; transform: scale(0.8); }
+        }
+
+        .zoom-controls {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .zoom-btn {
+            background: rgba(31, 58, 94, 0.1);
+            border: 1px solid rgba(31, 58, 94, 0.2);
+            color: #1f3a5e;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 1rem;
+            font-weight: 700;
+        }
+
+        .zoom-btn:hover {
+            background: #1f3a5e;
+            color: white;
+            border-color: #1f3a5e;
+            transform: scale(1.05);
+        }
+
+        .zoom-level {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #1f3a5e;
+            min-width: 40px;
+            text-align: center;
+        }
+
+        .video-wrapper {
+            position: relative;
+            border-radius: 24px;
+            overflow: hidden;
+            background: #0b1a2e;
+            box-shadow: inset 0 0 30px rgba(0,0,0,0.3), 0 8px 24px rgba(0,0,0,0.15);
+            flex: 1;
+            min-height: 350px;
+        }
+
+        /* Bingkai dekoratif di sekitar video */
+        .video-wrapper::before {
+            content: '';
+            position: absolute;
+            inset: -3px;
+            border-radius: 26px;
+            padding: 3px;
+            background: linear-gradient(135deg, #1f3a5e, #7f9fc7, #1f3a5e, #2a4b74);
+            background-size: 300% 300%;
+            animation: border-glow 4s ease-in-out infinite;
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        @keyframes border-glow {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .video-wrapper::after {
+            content: '📹 LIVE';
+            position: absolute;
+            top: 16px;
+            left: 16px;
+            background: rgba(231, 76, 60, 0.9);
+            color: white;
+            padding: 4px 14px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            z-index: 3;
+            backdrop-filter: blur(4px);
+            box-shadow: 0 4px 12px rgba(231, 76, 60, 0.3);
+        }
+
+        .video-wrapper video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            transition: transform 0.3s ease;
+            position: relative;
+            z-index: 1;
+        }
+
+        .video-wrapper video.zoomed {
+            transform: scale(var(--zoom-level, 1));
+        }
+
+        .video-status {
+            margin-top: 1rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 12px;
+            font-size: 0.85rem;
+            color: #2f4a6a;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #2ecc71;
+            display: inline-block;
+            animation: pulse-dot 2s infinite;
+        }
+
+        .status-dot.inactive {
+            background: #e74c3c;
+        }
+
+        /* Hiasan sudut */
+        .corner-decor {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(31, 58, 94, 0.15);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .corner-decor.tl { top: 10px; left: 10px; border-right: none; border-bottom: none; border-radius: 8px 0 0 0; }
+        .corner-decor.tr { top: 10px; right: 10px; border-left: none; border-bottom: none; border-radius: 0 8px 0 0; }
+        .corner-decor.bl { bottom: 10px; left: 10px; border-right: none; border-top: none; border-radius: 0 0 0 8px; }
+        .corner-decor.br { bottom: 10px; right: 10px; border-left: none; border-top: none; border-radius: 0 0 8px 0; }
+
+        /* Responsif */
+        @media (max-width: 1024px) {
+            .main-wrapper {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+            .video-wrapper {
+                min-height: 280px;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .profile-card {
+                padding: 2rem 1.5rem;
+                border-radius: 2.5rem;
+            }
+            h1 {
+                font-size: 2.8rem;
+            }
+            .sub-judul {
+                font-size: 1.1rem;
+                padding: 0.3rem 1.5rem;
+            }
+            .icon-ornament {
+                width: 70px;
+                height: 70px;
+                font-size: 2rem;
+            }
+            .chip {
+                font-size: 0.9rem;
+                padding: 0.4rem 1.2rem;
+            }
+            .video-card {
+                padding: 1.2rem;
+                border-radius: 2.5rem;
+            }
+            .video-wrapper {
+                min-height: 200px;
+            }
+        }
+
+        @media (max-width: 450px) {
+            h1 {
+                font-size: 2.2rem;
+            }
+            .sub-judul {
+                font-size: 0.95rem;
+                padding: 0.2rem 1rem;
+            }
+            .profile-card {
+                padding: 1.5rem 1rem;
+            }
+            .video-wrapper {
+                min-height: 180px;
+            }
+        }
+    </style>
 </head>
 <body>
-  <div class="profile-card">
-    
-    <!-- Ornamen ikon fisika + sapaan -->
-    <div class="icon-ornament">
-      <i class="fas fa-atom"></i>
+    <div class="main-wrapper">
+        <!-- Kartu Kiri: Profil -->
+        <div class="profile-card">
+            <div class="icon-ornament">
+                <i class="fas fa-atom"></i>
+            </div>
+
+            <div class="badge-nama">
+                <i class="fas fa-user-astronaut" style="margin-right: 8px;"></i> perkenalan
+            </div>
+
+            <h1>
+                <span class="nama-highlight">Stefanus Setiawan</span>
+            </h1>
+
+            <div class="sub-judul">
+                <i class="fas fa-chalkboard-teacher"></i> Guru Fisika · Santa Laurensia
+            </div>
+
+            <div class="divider-custom"></div>
+
+            <div class="profesi-badge">
+                <span class="chip">
+                    <i class="fas fa-flask"></i> Fisika
+                </span>
+                <span class="chip">
+                    <i class="fas fa-school"></i> SMA Santa Laurensia
+                </span>
+                <span class="chip">
+                    <i class="fas fa-graduation-cap"></i> Pendidik
+                </span>
+            </div>
+
+            <div class="quote-fisika">
+                <i class="fas fa-quote-left"></i> 
+                “Mengajarkan fisika adalah membuka tabir alam semesta”
+                <i class="fas fa-quote-right"></i>
+            </div>
+
+            <div class="social-mini">
+                <a href="#" aria-label="email"><i class="fas fa-envelope"></i></a>
+                <a href="#" aria-label="instagram"><i class="fab fa-instagram"></i></a>
+                <a href="#" aria-label="linkedin"><i class="fab fa-linkedin-in"></i></a>
+                <a href="#" aria-label="whatsapp"><i class="fab fa-whatsapp"></i></a>
+            </div>
+
+            <div class="footer-note">
+                <i class="fas fa-arrow-right"></i> 
+                <span>Santa Laurensia · 2026</span>
+                <i class="fas fa-arrow-left"></i>
+            </div>
+        </div>
+
+        <!-- Kartu Kanan: Video Stream -->
+        <div class="video-card">
+            <div class="video-header">
+                <h2>
+                    <i class="fas fa-circle"></i>
+                    Live Stream
+                </h2>
+                <div class="zoom-controls">
+                    <button class="zoom-btn" id="zoomOut" title="Zoom Out">−</button>
+                    <span class="zoom-level" id="zoomLevel">1.0×</span>
+                    <button class="zoom-btn" id="zoomIn" title="Zoom In">+</button>
+                    <button class="zoom-btn" id="zoomReset" title="Reset Zoom" style="font-size:0.8rem;">⟲</button>
+                </div>
+            </div>
+
+            <div class="video-wrapper" id="videoWrapper">
+                <video id="videoStream" autoplay muted playsinline>
+                    <source src="http://10.101.209.88" type="video/mp4">
+                    <source src="http://10.101.209.88" type="video/webm">
+                    <source src="http://10.101.209.88" type="video/ogg">
+                    Browser Anda tidak mendukung video tag.
+                </video>
+                <!-- Hiasan sudut -->
+                <div class="corner-decor tl"></div>
+                <div class="corner-decor tr"></div>
+                <div class="corner-decor bl"></div>
+                <div class="corner-decor br"></div>
+            </div>
+
+            <div class="video-status">
+                <span class="status-dot" id="statusDot"></span>
+                <span id="statusText">Menghubungkan ke stream...</span>
+                <span style="opacity:0.5;">|</span>
+                <span style="font-size:0.75rem; opacity:0.6;"><i class="fas fa-cog"></i> 10.101.209.88</span>
+            </div>
+        </div>
     </div>
 
-    <div class="badge-nama">
-      <i class="fas fa-user-astronaut" style="margin-right: 8px;"></i> perkenalan
-    </div>
+    <script>
+        (function() {
+            const video = document.getElementById('videoStream');
+            const statusDot = document.getElementById('statusDot');
+            const statusText = document.getElementById('statusText');
 
-    <!-- Nama utama dengan efek gradasi -->
-    <h1>
-      <span class="nama-highlight">Stefanus Setiawan</span>
-    </h1>
+            // --- Zoom Control ---
+            let currentZoom = 1.0;
+            const MIN_ZOOM = 0.5;
+            const MAX_ZOOM = 2.5;
+            const ZOOM_STEP = 0.1;
 
-    <!-- Profesi dengan ikon -->
-    <div class="sub-judul">
-      <i class="fas fa-chalkboard-teacher"></i> Guru Fisika · Santa Laurensia
-    </div>
+            const zoomInBtn = document.getElementById('zoomIn');
+            const zoomOutBtn = document.getElementById('zoomOut');
+            const zoomResetBtn = document.getElementById('zoomReset');
+            const zoomLevelDisplay = document.getElementById('zoomLevel');
+            const videoWrapper = document.getElementById('videoWrapper');
 
-    <!-- Divider dekoratif -->
-    <div class="divider-custom"></div>
+            function applyZoom(zoom) {
+                currentZoom = Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, zoom));
+                video.style.setProperty('--zoom-level', currentZoom);
+                video.classList.add('zoomed');
+                zoomLevelDisplay.textContent = currentZoom.toFixed(1) + '×';
+            }
 
-    <!-- Detail profesi + badge -->
-    <div class="profesi-badge">
-      <span class="chip">
-        <i class="fas fa-flask"></i> Fisika
-      </span>
-      <span class="chip">
-        <i class="fas fa-school"></i> SMA Santa Laurensia
-      </span>
-      <span class="chip">
-        <i class="fas fa-graduation-cap"></i> Pendidik
-      </span>
-    </div>
+            zoomInBtn.addEventListener('click', () => {
+                applyZoom(currentZoom + ZOOM_STEP);
+            });
 
-    <!-- Kutipan inspiratif (sentuhan fisika) -->
-    <div class="quote-fisika">
-      <i class="fas fa-quote-left"></i> 
-      “Mengajarkan fisika adalah membuka tabir alam semesta”
-      <i class="fas fa-quote-right"></i>
-    </div>
+            zoomOutBtn.addEventListener('click', () => {
+                applyZoom(currentZoom - ZOOM_STEP);
+            });
 
-    <!-- Ikon sosial / kontak (hiasan) -->
-    <div class="social-mini">
-      <a href="#" aria-label="email"><i class="fas fa-envelope"></i></a>
-      <a href="#" aria-label="instagram"><i class="fab fa-instagram"></i></a>
-      <a href="#" aria-label="linkedin"><i class="fab fa-linkedin-in"></i></a>
-      <a href="#" aria-label="whatsapp"><i class="fab fa-whatsapp"></i></a>
-    </div>
+            zoomResetBtn.addEventListener('click', () => {
+                applyZoom(1.0);
+            });
 
-    <!-- Footer -->
-    <div class="footer-note">
-      <i class="fas fa-arrow-right"></i> 
-      <span>Santa Laurensia · 2026</span>
-      <i class="fas fa-arrow-left"></i>
-    </div>
-  </div>
+            // Inisialisasi zoom
+            applyZoom(1.0);
+
+            // --- Video status monitoring ---
+            function updateStatus(connected) {
+                if (connected) {
+                    statusDot.className = 'status-dot';
+                    statusText.textContent = 'Stream aktif';
+                } else {
+                    statusDot.className = 'status-dot inactive';
+                    statusText.textContent = 'Mencoba menghubungkan...';
+                }
+            }
+
+            // Event listener untuk video
+            video.addEventListener('loadeddata', () => {
+                updateStatus(true);
+            });
+
+            video.addEventListener('error', () => {
+                updateStatus(false);
+                statusText.textContent = 'Gagal terhubung ke stream';
+            });
+
+            video.addEventListener('stalled', () => {
+                updateStatus(false);
+                statusText.textContent = 'Stream tertunda...';
+            });
+
+            video.addEventListener('playing', () => {
+                updateStatus(true);
+            });
+
+            video.addEventListener('waiting', () => {
+                updateStatus(false);
+                statusText.textContent = 'Memuat stream...';
+            });
+
+            // Coba reload video jika gagal
+            let retryCount = 0;
+            const MAX_RETRIES = 5;
+
+            video.addEventListener('error', function onError() {
+                if (retryCount < MAX_RETRIES) {
+                    retryCount++;
+                    setTimeout(() => {
+                        video.load();
+                    }, 3000);
+                } else {
+                    statusText.textContent = 'Tidak dapat terhubung ke stream';
+                }
+            });
+
+            // Coba mulai dengan status menunggu
+            updateStatus(false);
+            statusText.textContent = 'Menghubungkan ke stream...';
+
+            // Jika video gagal dimuat setelah 5 detik, tampilkan pesan
+            setTimeout(() => {
+                if (video.readyState === 0) {
+                    statusText.textContent = 'Stream tidak tersedia';
+                    statusDot.className = 'status-dot inactive';
+                }
+            }, 5000);
+
+            // --- Keyboard shortcut untuk zoom ---
+            document.addEventListener('keydown', (e) => {
+                if (e.ctrlKey && (e.key === '=' || e.key === '+')) {
+                    e.preventDefault();
+                    applyZoom(currentZoom + ZOOM_STEP);
+                } else if (e.ctrlKey && e.key === '-') {
+                    e.preventDefault();
+                    applyZoom(currentZoom - ZOOM_STEP);
+                } else if (e.ctrlKey && e.key === '0') {
+                    e.preventDefault();
+                    applyZoom(1.0);
+                }
+            });
+
+            // --- Tooltip untuk zoom controls ---
+            const zoomBtns = document.querySelectorAll('.zoom-btn');
+            zoomBtns.forEach(btn => {
+                btn.setAttribute('aria-label', btn.id === 'zoomIn' ? 'Perbesar (Ctrl+)' : 
+                                              btn.id === 'zoomOut' ? 'Perkecil (Ctrl-)' : 
+                                              'Reset zoom (Ctrl+0)');
+            });
+
+            console.log('🎥 Video Stream berhasil dimuat, zoom tersedia!');
+        })();
+    </script>
+
+    <!-- Fallback jika video tidak bisa dimuat dengan tag source, coba gunakan img atau pesan -->
+    <noscript>
+        <div style="background: #ff6b6b; color: white; padding: 1rem; border-radius: 12px; text-align: center;">
+            JavaScript diperlukan untuk kontrol zoom dan status stream.
+        </div>
+    </noscript>
 </body>
 </html>
