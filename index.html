@@ -24,7 +24,7 @@
 
     /* kartu utama – nuansa klasik & hangat */
     .card {
-      max-width: 720px;
+      max-width: 760px;
       width: 100%;
       background: rgba(255, 250, 240, 0.75);
       backdrop-filter: blur(8px);
@@ -89,16 +89,54 @@
       color: #3d2c1b;
     }
 
+    /* profil: foto + biodata sejajar */
+    .profil-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+      margin: 1.8rem 0 2.8rem 0;
+      flex-wrap: wrap;
+    }
+
+    .foto-container {
+      flex-shrink: 0;
+      width: 130px;
+      height: 130px;
+      border-radius: 50%;
+      overflow: hidden;
+      box-shadow: 0 8px 18px -6px rgba(40, 30, 20, 0.2);
+      border: 3px solid #fcf6ed;
+      background: #d9cec0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .foto-container img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .foto-placeholder {
+      font-size: 3rem;
+      color: #8f7a64;
+      font-weight: 300;
+      letter-spacing: 0.05em;
+    }
+
     /* biodata — bersih, tanpa ikon/link */
     .biodata {
-      margin: 2.2rem 0 2.8rem 0;
+      flex: 1;
+      min-width: 200px;
       padding: 0.2rem 0;
     }
 
     .biodata-item {
       display: flex;
       align-items: baseline;
-      padding: 0.65rem 0;
+      padding: 0.6rem 0;
       border-bottom: 1px dashed #dacfc3;
     }
 
@@ -107,18 +145,17 @@
     }
 
     .biodata-label {
-      font-size: 1rem;
+      font-size: 0.85rem;
       font-weight: 500;
       color: #6b5a48;
-      min-width: 100px;
+      min-width: 85px;
       letter-spacing: 0.02em;
       text-transform: uppercase;
-      font-size: 0.85rem;
       opacity: 0.8;
     }
 
     .biodata-value {
-      font-size: 1.5rem;
+      font-size: 1.4rem;
       font-weight: 500;
       color: #2c1f13;
       line-height: 1.4;
@@ -131,7 +168,7 @@
       background: #ede5db;
       padding: 0.1rem 0.8rem;
       border-radius: 30px;
-      font-size: 1.1rem;
+      font-size: 1rem;
       display: inline-block;
       margin-left: 0.3rem;
     }
@@ -140,7 +177,7 @@
     .next-wrapper {
       display: flex;
       justify-content: flex-end;
-      margin-top: 1rem;
+      margin-top: 0.5rem;
       border-top: 1px solid rgba(180, 160, 140, 0.25);
       padding-top: 2rem;
     }
@@ -178,7 +215,7 @@
     }
 
     /* fine-tuning untuk mobile */
-    @media (max-width: 550px) {
+    @media (max-width: 600px) {
       .card {
         padding: 1.8rem 1.5rem 2rem;
         border-radius: 2rem;
@@ -191,10 +228,22 @@
         padding: 0.2rem 1rem;
         margin-top: 0.5rem;
       }
+      .profil-wrapper {
+        flex-direction: column;
+        align-items: center;
+        gap: 1.5rem;
+      }
+      .foto-container {
+        width: 120px;
+        height: 120px;
+      }
+      .biodata {
+        width: 100%;
+      }
       .biodata-item {
         flex-direction: column;
         align-items: flex-start;
-        padding: 0.8rem 0;
+        padding: 0.7rem 0;
       }
       .biodata-label {
         min-width: auto;
@@ -229,12 +278,10 @@
       .biodata-value {
         font-size: 1.1rem;
       }
-    }
-
-    /* sentuhan halus */
-    .highlight {
-      background: linear-gradient(120deg, #dacfc3 0%, #dacfc3 40%, transparent 80%);
-      padding: 0 0.2rem;
+      .foto-container {
+        width: 100px;
+        height: 100px;
+      }
     }
   </style>
 </head>
@@ -252,31 +299,47 @@
       </div>
     </div>
 
-    <!-- biodata lengkap: Stefanus Setiawan, guru fisika, SMA Santa Laurensia -->
-    <div class="biodata">
-      <div class="biodata-item">
-        <span class="biodata-label">Nama</span>
-        <span class="biodata-value">Stefanus Setiawan</span>
+    <!-- profil: foto + biodata -->
+    <div class="profil-wrapper">
+      <!-- foto profil (gunakan link gambar publik, saat ini placeholder) -->
+      <div class="foto-container">
+        <!-- GANTI src dengan link gambar publik Anda (misal dari Imgur, atau link direct Google Drive setelah diizinkan) -->
+        <img src="https://drive.google.com/file/d/1nqI6IOyNWYVPBSpQz8iqyVhrB0hSFPo1/view?usp=sharing" alt="Foto Stefanus Setiawan" id="foto-profil">
       </div>
-      <div class="biodata-item">
-        <span class="biodata-label">Profesi</span>
-        <span class="biodata-value">Guru Fisika</span>
-      </div>
-      <div class="biodata-item">
-        <span class="biodata-label">Sekolah</span>
-        <span class="biodata-value">
-          SMA Santa Laurensia
-          <span class="sekolah">🖋️</span>
-        </span>
+
+      <!-- biodata lengkap -->
+      <div class="biodata">
+        <div class="biodata-item">
+          <span class="biodata-label">Nama</span>
+          <span class="biodata-value">Stefanus Setiawan</span>
+        </div>
+        <div class="biodata-item">
+          <span class="biodata-label">Profesi</span>
+          <span class="biodata-value">Guru Fisika</span>
+        </div>
+        <div class="biodata-item">
+          <span class="biodata-label">Sekolah</span>
+          <span class="biodata-value">
+            SMA Santa Laurensia
+            <span class="sekolah">🖋️</span>
+          </span>
+        </div>
       </div>
     </div>
 
-    <!-- tombol next menuju halaman simulasi (tanpa embel-embel link lain) -->
+    <!-- tombol next menuju halaman simulasi -->
     <div class="next-wrapper">
       <a href="https://stefanussetiawan1592-dev.github.io/pgf2026/simulasi" class="btn-next">
         Next →
       </a>
     </div>
   </div>
+
+  <script>
+    // (opsional) Jika Anda memiliki link gambar publik, ganti src di bawah ini.
+    // Contoh: document.getElementById('foto-profil').src = 'https://link-ke-gambar-anda.jpg';
+    // Untuk Google Drive, gunakan link direct setelah diizinkan publik.
+    console.log('Halaman perkenalan PGF 2026 - Stefanus Setiawan');
+  </script>
 </body>
 </html>
