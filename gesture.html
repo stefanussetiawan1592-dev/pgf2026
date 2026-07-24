@@ -1,0 +1,848 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Hand Gesture Quiz - MediaPipe</title>
+
+    <!-- MediaPipe CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous">
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js" crossorigin="anonymous">
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js" crossorigin="anonymous">
+    </script>
+
+    <style>
+        /* ─── Reset & Base ─── */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', 'Poppins', system-ui, sans-serif;
+            background: #0f0f1a;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+        }
+
+        .app {
+            display: flex;
+            width: 100vw;
+            height: 100vh;
+            background: #141422;
+        }
+
+        /* ─── KIRI : Kamera ─── */
+        .camera-panel {
+            flex: 1 1 50%;
+            position: relative;
+            background: #1a1a2e;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        .camera-panel .video-wrapper {
+            flex: 1;
+            position: relative;
+            background: #000;
+        }
+        .camera-panel .video-wrapper video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transform: scaleX(-1);
+            display: block;
+        }
+        .camera-panel .video-wrapper canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            transform: scaleX(-1);
+            pointer-events: none;
+        }
+
+        /* Overlay instruksi di atas kamera */
+        .gesture-overlay {
+            position: absolute;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 16px;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(8px);
+            padding: 12px 24px;
+            border-radius: 60px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            flex-wrap: wrap;
+            justify-content: center;
+            z-index: 10;
+            pointer-events: none;
+        }
+        .gesture-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #ccc;
+            background: rgba(255, 255, 255, 0.06);
+            padding: 4px 12px;
+            border-radius: 30px;
+            border: 1px solid transparent;
+            transition: all 0.3s;
+        }
+        .gesture-item.active {
+            border-color: #facc15;
+            background: rgba(250, 204, 21, 0.18);
+            color: #facc15;
+            box-shadow: 0 0 20px rgba(250, 204, 21, 0.15);
+        }
+        .gesture-item .icon {
+            font-size: 22px;
+            line-height: 1;
+        }
+        .gesture-item .label {
+            font-size: 13px;
+            letter-spacing: 0.5px;
+        }
+        .gesture-item .letter {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.12);
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            text-align: center;
+            line-height: 24px;
+            font-size: 13px;
+            font-weight: 700;
+            margin-left: 2px;
+        }
+
+        /* Status hand */
+        .hand-status {
+            position: absolute;
+            top: 16px;
+            left: 16px;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(6px);
+            padding: 6px 16px;
+            border-radius: 30px;
+            font-size: 13px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            z-index: 10;
+            pointer-events: none;
+            color: #aaa;
+        }
+        .hand-status .detected {
+            color: #4ade80;
+            font-weight: 600;
+        }
+        .hand-status .not-detected {
+            color: #f87171;
+            font-weight: 600;
+        }
+
+        /* ─── KANAN : Soal ─── */
+        .quiz-panel {
+            flex: 1 1 50%;
+            padding: 40px 48px;
+            display: flex;
+            flex-direction: column;
+            background: linear-gradient(145deg, #1a1a2e, #141422);
+            overflow-y: auto;
+            border-left: 1px solid rgba(255, 255, 255, 0.04);
+        }
+
+        .quiz-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 28px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+        }
+        .quiz-header .progress {
+            font-size: 14px;
+            font-weight: 500;
+            color: #8888aa;
+            letter-spacing: 0.3px;
+        }
+        .quiz-header .progress span {
+            color: #fff;
+            font-weight: 700;
+        }
+        .quiz-header .badge {
+            background: rgba(250, 204, 21, 0.12);
+            border: 1px solid rgba(250, 204, 21, 0.2);
+            padding: 4px 16px;
+            border-radius: 30px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #facc15;
+        }
+
+        .question-text {
+            font-size: 28px;
+            font-weight: 700;
+            line-height: 1.4;
+            margin-bottom: 36px;
+            color: #f0f0ff;
+            letter-spacing: -0.2px;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            margin-bottom: 32px;
+        }
+        .option {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 2px solid rgba(255, 255, 255, 0.06);
+            border-radius: 16px;
+            padding: 16px 24px;
+            transition: all 0.25s ease;
+            cursor: default;
+            position: relative;
+        }
+        .option .letter-badge {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.06);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 16px;
+            color: #8888bb;
+            flex-shrink: 0;
+            transition: all 0.3s;
+        }
+        .option .text {
+            font-size: 18px;
+            font-weight: 500;
+            color: #d0d0e8;
+            transition: color 0.3s;
+        }
+        /* Hover state (smooth) */
+        .option:hover {
+            background: rgba(255, 255, 255, 0.07);
+            border-color: rgba(255, 255, 255, 0.12);
+        }
+
+        /* Selected (gesture) */
+        .option.selected {
+            border-color: #facc15;
+            background: rgba(250, 204, 21, 0.08);
+            box-shadow: 0 0 30px rgba(250, 204, 21, 0.05);
+        }
+        .option.selected .letter-badge {
+            background: #facc15;
+            color: #141422;
+        }
+        .option.selected .text {
+            color: #fff;
+        }
+
+        /* Correct */
+        .option.correct {
+            border-color: #4ade80;
+            background: rgba(74, 222, 128, 0.12);
+            box-shadow: 0 0 30px rgba(74, 222, 128, 0.08);
+        }
+        .option.correct .letter-badge {
+            background: #4ade80;
+            color: #141422;
+        }
+        .option.correct .text {
+            color: #fff;
+        }
+
+        /* Wrong */
+        .option.wrong {
+            border-color: #f87171;
+            background: rgba(248, 113, 113, 0.12);
+            box-shadow: 0 0 30px rgba(248, 113, 113, 0.08);
+        }
+        .option.wrong .letter-badge {
+            background: #f87171;
+            color: #141422;
+        }
+        .option.wrong .text {
+            color: #fff;
+        }
+
+        /* Feedback area */
+        .feedback {
+            margin-top: auto;
+            padding: 16px 20px;
+            border-radius: 16px;
+            font-size: 20px;
+            font-weight: 700;
+            text-align: center;
+            min-height: 72px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.4s ease;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+        }
+        .feedback.success {
+            background: rgba(74, 222, 128, 0.08);
+            border-color: rgba(74, 222, 128, 0.25);
+            color: #4ade80;
+        }
+        .feedback.error {
+            background: rgba(248, 113, 113, 0.08);
+            border-color: rgba(248, 113, 113, 0.25);
+            color: #f87171;
+        }
+        .feedback .emoji {
+            margin-right: 12px;
+            font-size: 28px;
+        }
+
+        /* ─── Responsive ─── */
+        @media (max-width: 900px) {
+            .app {
+                flex-direction: column;
+            }
+            .camera-panel {
+                flex: 0 0 45vh;
+            }
+            .quiz-panel {
+                flex: 1;
+                padding: 24px 20px;
+                border-left: none;
+                border-top: 1px solid rgba(255, 255, 255, 0.04);
+            }
+            .question-text {
+                font-size: 22px;
+                margin-bottom: 24px;
+            }
+            .option {
+                padding: 12px 18px;
+            }
+            .option .text {
+                font-size: 16px;
+            }
+            .gesture-overlay {
+                padding: 8px 14px;
+                gap: 8px;
+                bottom: 12px;
+            }
+            .gesture-item {
+                font-size: 11px;
+                padding: 3px 8px;
+            }
+            .gesture-item .icon {
+                font-size: 18px;
+            }
+            .feedback {
+                font-size: 17px;
+                min-height: 56px;
+                padding: 12px 16px;
+            }
+        }
+        @media (max-width: 500px) {
+            .quiz-panel {
+                padding: 16px 14px;
+            }
+            .question-text {
+                font-size: 18px;
+            }
+            .option .text {
+                font-size: 14px;
+            }
+            .option .letter-badge {
+                width: 32px;
+                height: 32px;
+                font-size: 13px;
+            }
+            .gesture-item .label {
+                display: none;
+            }
+        }
+
+        /* Scrollbar */
+        .quiz-panel::-webkit-scrollbar {
+            width: 4px;
+        }
+        .quiz-panel::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .quiz-panel::-webkit-scrollbar-thumb {
+            background: #333355;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app">
+
+        <!-- ─── KIRI : Kamera ─── -->
+        <div class="camera-panel">
+            <div class="video-wrapper">
+                <video id="webcam" playsinline></video>
+                <canvas id="gestureCanvas"></canvas>
+
+                <!-- Status Hand -->
+                <div class="hand-status" id="handStatus">
+                    👋 <span class="not-detected" id="handDetectText">Tidak terdeteksi</span>
+                </div>
+
+                <!-- Gesture Overlay -->
+                <div class="gesture-overlay" id="gestureOverlay">
+                    <div class="gesture-item" data-gesture="1">
+                        <span class="icon">☝️</span>
+                        <span class="label">1 jari</span>
+                        <span class="letter">A</span>
+                    </div>
+                    <div class="gesture-item" data-gesture="2">
+                        <span class="icon">✌️</span>
+                        <span class="label">2 jari</span>
+                        <span class="letter">B</span>
+                    </div>
+                    <div class="gesture-item" data-gesture="3">
+                        <span class="icon">🖐️</span>
+                        <span class="label">3 jari</span>
+                        <span class="letter">C</span>
+                    </div>
+                    <div class="gesture-item" data-gesture="4">
+                        <span class="icon">🤚</span>
+                        <span class="label">4 jari</span>
+                        <span class="letter">D</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ─── KANAN : Soal ─── -->
+        <div class="quiz-panel" id="quizPanel">
+            <div class="quiz-header">
+                <div class="progress">Soal <span id="currentNum">1</span> / <span id="totalNum">3</span></div>
+                <div class="badge" id="statusBadge">🧠 Gesture Answer</div>
+            </div>
+
+            <div class="question-text" id="questionText">
+                Muat soal...
+            </div>
+
+            <div class="options" id="optionsContainer">
+                <!-- diisi JS -->
+            </div>
+
+            <div class="feedback" id="feedback">
+                <span>Tunjukkan gesture untuk menjawab</span>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        // 1. DATA SOAL
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        const questions = [{
+            question: 'Apa ibu kota Indonesia?',
+            options: ['Jakarta', 'Bandung', 'Surabaya', 'Medan'],
+            correct: 'A'
+        }, {
+            question: 'Planet terdekat dengan Matahari adalah?',
+            options: ['Venus', 'Merkurius', 'Bumi', 'Mars'],
+            correct: 'B'
+        }, {
+            question: 'Gunung tertinggi di Indonesia adalah?',
+            options: ['Merapi', 'Rinjani', 'Jayawijaya', 'Semeru'],
+            correct: 'C'
+        }];
+
+        const totalQuestions = questions.length;
+        let currentIndex = 0;
+        let isCooldown = false;
+        let isAnswered = false;
+        let gestureStabilityCount = 0;
+        let lastStableGesture = null;
+
+        // ─── DOM refs ───
+        const video = document.getElementById('webcam');
+        const canvas = document.getElementById('gestureCanvas');
+        const ctx = canvas.getContext('2d');
+
+        const questionText = document.getElementById('questionText');
+        const optionsContainer = document.getElementById('optionsContainer');
+        const feedback = document.getElementById('feedback');
+        const currentNum = document.getElementById('currentNum');
+        const totalNum = document.getElementById('totalNum');
+        const statusBadge = document.getElementById('statusBadge');
+        const handDetectText = document.getElementById('handDetectText');
+
+        const gestureItems = document.querySelectorAll('.gesture-item');
+
+        totalNum.textContent = totalQuestions;
+
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        // 2. RENDER SOAL
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        function renderQuestion(index) {
+            const q = questions[index];
+            if (!q) return;
+
+            currentNum.textContent = index + 1;
+            questionText.textContent = q.question;
+
+            const letters = ['A', 'B', 'C', 'D'];
+            optionsContainer.innerHTML = '';
+            q.options.forEach((opt, i) => {
+                const div = document.createElement('div');
+                div.className = 'option';
+                div.dataset.letter = letters[i];
+                div.innerHTML = `
+                    <span class="letter-badge">${letters[i]}</span>
+                    <span class="text">${opt}</span>
+                `;
+                optionsContainer.appendChild(div);
+            });
+
+            // Reset feedback
+            feedback.className = 'feedback';
+            feedback.innerHTML = `<span>👋 Tunjukkan gesture untuk menjawab</span>`;
+
+            // Reset status
+            isAnswered = false;
+            isCooldown = false;
+            gestureStabilityCount = 0;
+            lastStableGesture = null;
+            statusBadge.textContent = '🧠 Gesture Answer';
+            statusBadge.style.borderColor = 'rgba(250,204,21,0.2)';
+            statusBadge.style.color = '#facc15';
+
+            // Reset option highlights
+            document.querySelectorAll('.option').forEach(el => {
+                el.classList.remove('selected', 'correct', 'wrong');
+            });
+            gestureItems.forEach(el => el.classList.remove('active'));
+        }
+
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        // 3. GESTURE LOGIC
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        function countExtendedFingers(landmarks) {
+            // Landmark indices: 8=index tip, 12=middle tip, 16=ring tip, 20=pinky tip
+            // PIP joints: 6, 10, 14, 18
+            const fingerTips = [8, 12, 16, 20];
+            const fingerPIPs = [6, 10, 14, 18];
+            let count = 0;
+
+            for (let i = 0; i < fingerTips.length; i++) {
+                const tip = landmarks[fingerTips[i]];
+                const pip = landmarks[fingerPIPs[i]];
+                // Jika tangan menghadap kamera, y↑ = jari terangkat
+                if (tip.y < pip.y) {
+                    count++;
+                }
+            }
+            return count;
+        }
+
+        function isThumbExtended(landmarks) {
+            const thumbTip = landmarks[4];
+            const thumbMCP = landmarks[2];
+            const wrist = landmarks[0];
+            const distTip = Math.hypot(thumbTip.x - wrist.x, thumbTip.y - wrist.y);
+            const distMCP = Math.hypot(thumbMCP.x - wrist.x, thumbMCP.y - wrist.y);
+            return distTip > distMCP * 1.15;
+        }
+
+        function getGestureFromLandmarks(landmarks) {
+            const count = countExtendedFingers(landmarks);
+            const thumb = isThumbExtended(landmarks);
+
+            // Jika semua 4 jari + thumb terentang => 5 jari (ignore)
+            if (count === 4 && thumb) return null;
+
+            // count 1-4 => A-D
+            if (count >= 1 && count <= 4) {
+                return String.fromCharCode(64 + count); // 1->A, 2->B, 3->C, 4->D
+            }
+            return null;
+        }
+
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        // 4. HANDLE ANSWER
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        function handleGesture(letter) {
+            if (isCooldown || isAnswered) return;
+            if (!letter) return;
+
+            const q = questions[currentIndex];
+            if (!q) return;
+
+            const isCorrect = (letter === q.correct);
+
+            // Highlight option
+            const options = document.querySelectorAll('.option');
+            options.forEach(el => {
+                el.classList.remove('selected', 'correct', 'wrong');
+                if (el.dataset.letter === letter) {
+                    el.classList.add('selected');
+                    if (isCorrect) {
+                        el.classList.add('correct');
+                    } else {
+                        el.classList.add('wrong');
+                    }
+                }
+            });
+
+            // Highlight gesture overlay
+            const idx = letter.charCodeAt(0) - 64; // A->1, B->2, ...
+            gestureItems.forEach(el => {
+                el.classList.toggle('active', parseInt(el.dataset.gesture) === idx);
+            });
+
+            if (isCorrect) {
+                // ── BENAR ──
+                isAnswered = true;
+                isCooldown = true;
+                feedback.className = 'feedback success';
+                feedback.innerHTML = `<span class="emoji">✅</span> Benar! Jawaban <strong>${letter}</strong> tepat!`;
+
+                statusBadge.textContent = '✅ Benar!';
+                statusBadge.style.borderColor = 'rgba(74,222,128,0.4)';
+                statusBadge.style.color = '#4ade80';
+
+                // Cooldown lalu lanjut
+                setTimeout(() => {
+                    if (currentIndex < totalQuestions - 1) {
+                        currentIndex++;
+                        renderQuestion(currentIndex);
+                    } else {
+                        // Selesai semua soal
+                        feedback.className = 'feedback success';
+                        feedback.innerHTML = `<span class="emoji">🎉</span> Selamat! Kamu menjawab semua soal dengan benar!`;
+                        statusBadge.textContent = '🏆 Selesai!';
+                        statusBadge.style.borderColor = 'rgba(250,204,21,0.5)';
+                        statusBadge.style.color = '#facc15';
+                        isCooldown = false;
+                    }
+                }, 1500);
+
+            } else {
+                // ── SALAH ──
+                isAnswered = true;
+                isCooldown = true;
+                feedback.className = 'feedback error';
+                feedback.innerHTML = `<span class="emoji">❌</span> Salah! Jawaban yang benar adalah <strong>${q.correct}</strong>. Coba lagi!`;
+
+                statusBadge.textContent = '❌ Salah';
+                statusBadge.style.borderColor = 'rgba(248,113,113,0.4)';
+                statusBadge.style.color = '#f87171';
+
+                setTimeout(() => {
+                    // Reset untuk coba lagi
+                    isAnswered = false;
+                    isCooldown = false;
+                    gestureStabilityCount = 0;
+                    lastStableGesture = null;
+                    feedback.className = 'feedback';
+                    feedback.innerHTML = `<span>👋 Coba tunjukkan gesture yang benar</span>`;
+
+                    // Reset highlight
+                    document.querySelectorAll('.option').forEach(el => {
+                        el.classList.remove('selected', 'correct', 'wrong');
+                    });
+                    gestureItems.forEach(el => el.classList.remove('active'));
+
+                    statusBadge.textContent = '🧠 Gesture Answer';
+                    statusBadge.style.borderColor = 'rgba(250,204,21,0.2)';
+                    statusBadge.style.color = '#facc15';
+                }, 1800);
+            }
+        }
+
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        // 5. MEDIAPIPE HANDS
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        function onResults(results) {
+            // Gambar ulang canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            if (results.multiHandLandmarks && results.multiHandLandmarks.length > 0) {
+                // Gambar landmarks
+                for (const landmarks of results.multiHandLandmarks) {
+                    drawConnectors(ctx, landmarks);
+                    drawLandmarks(ctx, landmarks);
+                }
+
+                // Ambil hand pertama
+                const landmarks = results.multiHandLandmarks[0];
+                const gesture = getGestureFromLandmarks(landmarks);
+
+                handDetectText.textContent = 'Tangan terdeteksi';
+                handDetectText.className = 'detected';
+
+                // Gesture stabilisasi (3 frame berturut-turut)
+                if (gesture) {
+                    if (gesture === lastStableGesture) {
+                        gestureStabilityCount++;
+                    } else {
+                        gestureStabilityCount = 1;
+                        lastStableGesture = gesture;
+                    }
+
+                    // Jika stabil ≥ 5 frame, eksekusi
+                    if (gestureStabilityCount >= 5) {
+                        handleGesture(gesture);
+                        // Reset counter agar tidak trigger berulang
+                        gestureStabilityCount = 0;
+                    }
+                } else {
+                    gestureStabilityCount = 0;
+                    lastStableGesture = null;
+                }
+
+                // Tampilkan gesture di overlay
+                gestureItems.forEach(el => {
+                    const g = parseInt(el.dataset.gesture);
+                    const letter = String.fromCharCode(64 + g);
+                    el.classList.toggle('active', gesture === letter);
+                });
+
+            } else {
+                handDetectText.textContent = 'Tidak terdeteksi';
+                handDetectText.className = 'not-detected';
+                gestureStabilityCount = 0;
+                lastStableGesture = null;
+                gestureItems.forEach(el => el.classList.remove('active'));
+            }
+        }
+
+        // ─── Drawing helpers ───
+        function drawConnectors(ctx, landmarks) {
+            const connections = [
+                [0, 1],
+                [1, 2],
+                [2, 3],
+                [3, 4],
+                [0, 5],
+                [5, 6],
+                [6, 7],
+                [7, 8],
+                [5, 9],
+                [9, 10],
+                [10, 11],
+                [11, 12],
+                [9, 13],
+                [13, 14],
+                [14, 15],
+                [15, 16],
+                [13, 17],
+                [17, 18],
+                [18, 19],
+                [19, 20],
+                [0, 17]
+            ];
+            ctx.strokeStyle = 'rgba(74, 222, 128, 0.5)';
+            ctx.lineWidth = 2;
+            for (const [i, j] of connections) {
+                const a = landmarks[i];
+                const b = landmarks[j];
+                ctx.beginPath();
+                ctx.moveTo(a.x * canvas.width, a.y * canvas.height);
+                ctx.lineTo(b.x * canvas.width, b.y * canvas.height);
+                ctx.stroke();
+            }
+        }
+
+        function drawLandmarks(ctx, landmarks) {
+            for (const lm of landmarks) {
+                ctx.beginPath();
+                ctx.arc(lm.x * canvas.width, lm.y * canvas.height, 5, 0, 2 * Math.PI);
+                ctx.fillStyle = 'rgba(250, 204, 21, 0.85)';
+                ctx.fill();
+                ctx.strokeStyle = 'rgba(255,255,255,0.3)';
+                ctx.lineWidth = 1;
+                ctx.stroke();
+            }
+        }
+
+        // ─── Inisialisasi MediaPipe ───
+        const hands = new Hands({
+            locateFile: (file) => {
+                return `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`;
+            }
+        });
+
+        hands.setOptions({
+            maxNumHands: 1,
+            modelComplexity: 1,
+            minDetectionConfidence: 0.7,
+            minTrackingConfidence: 0.6,
+        });
+
+        hands.onResults(onResults);
+
+        // ─── Camera ───
+        const camera = new Camera(video, {
+            onFrame: async () => {
+                await hands.send({ image: video });
+            },
+            width: 640,
+            height: 480,
+        });
+
+        // ─── Resize canvas ───
+        function resizeCanvas() {
+            const rect = video.getBoundingClientRect();
+            canvas.width = rect.width || 640;
+            canvas.height = rect.height || 480;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        setTimeout(resizeCanvas, 100);
+
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        // 6. START
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        camera.start().then(() => {
+            console.log('📷 Kamera berjalan');
+            renderQuestion(0);
+        }).catch(err => {
+            console.error('Gagal akses kamera:', err);
+            feedback.className = 'feedback error';
+            feedback.innerHTML = `
+                <span class="emoji">⚠️</span> 
+                Akses kamera ditolak. Izinkan kamera di browser.
+            `;
+        });
+
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        // 7. TOMBOL PANAS (opsional: keyboard untuk testing)
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        document.addEventListener('keydown', (e) => {
+            const key = e.key.toUpperCase();
+            if (['A', 'B', 'C', 'D'].includes(key)) {
+                handleGesture(key);
+            }
+        });
+
+        console.log('🧠 Hand Gesture Quiz siap!');
+        console.log('📌 Gunakan 1-4 jari untuk menjawab A-D');
+        console.log('⌨️  Keyboard: A B C D untuk testing');
+    </script>
+
+</body>
+</html>
