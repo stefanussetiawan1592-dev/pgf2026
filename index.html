@@ -1,831 +1,282 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Stefanus Setiawan · Guru Fisika</title>
-    <!-- Google Fonts & Font Awesome -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,600;14..32,700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PGF 2026 · Perkenalan</title>
+  <style>
+    /* reset & gaya dasar */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-        body {
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background: radial-gradient(circle at 20% 30%, #eef5ff, #d4e0f0);
-            font-family: 'Inter', sans-serif;
-            padding: 1.5rem;
-            position: relative;
-        }
+    body {
+      min-height: 100vh;
+      background: linear-gradient(145deg, #f7f3e9 0%, #e8e0d5 100%);
+      font-family: 'Segoe UI', Roboto, system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+    }
 
-        body::before {
-            content: '';
-            position: fixed;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle at 70% 80%, rgba(31, 109, 169, 0.03) 0%, transparent 50%),
-                        radial-gradient(circle at 20% 20%, rgba(31, 109, 169, 0.05) 0%, transparent 40%);
-            pointer-events: none;
-            z-index: 0;
-        }
+    /* kartu utama – nuansa klasik & hangat */
+    .card {
+      max-width: 720px;
+      width: 100%;
+      background: rgba(255, 250, 240, 0.75);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border-radius: 2.5rem 2.5rem 2rem 2rem;
+      box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.25),
+                  0 8px 24px -6px rgba(0, 0, 0, 0.08),
+                  inset 0 1px 0 rgba(255, 255, 255, 0.6);
+      padding: 2.5rem 2.8rem 2.8rem;
+      transition: all 0.2s ease;
+      border: 1px solid rgba(255, 235, 210, 0.5);
+    }
 
-        .main-wrapper {
-            max-width: 1400px;
-            width: 100%;
-            position: relative;
-            z-index: 1;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 2rem;
-            align-items: stretch;
-        }
+    /* header — tema PGF */
+    .header {
+      border-bottom: 2px solid #c9b8a4;
+      padding-bottom: 1.5rem;
+      margin-bottom: 2rem;
+      position: relative;
+    }
 
-        .profile-card {
-            background: rgba(255, 255, 255, 0.75);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border-radius: 3rem 3rem 3rem 3rem;
-            box-shadow: 0 30px 60px rgba(0, 20, 40, 0.20), 0 10px 25px rgba(0, 0, 0, 0.05);
-            padding: 2.8rem 2.8rem 3.2rem;
-            border: 1px solid rgba(255, 255, 255, 0.5);
-            text-align: center;
-            transition: transform 0.25s ease, box-shadow 0.3s ease;
-        }
+    .header::after {
+      content: '';
+      position: absolute;
+      bottom: -4px;
+      left: 0;
+      width: 80px;
+      height: 3px;
+      background: #b39b82;
+      border-radius: 12px;
+    }
 
-        .profile-card:hover {
-            transform: translateY(-6px);
-            box-shadow: 0 40px 70px rgba(0, 30, 60, 0.25);
-        }
+    .header h1 {
+      font-size: 2.4rem;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      color: #3e2e20;
+      line-height: 1.2;
+    }
 
-        .icon-ornament {
-            display: inline-flex;
-            justify-content: center;
-            align-items: center;
-            background: linear-gradient(145deg, #2b3f5c, #1a2a40);
-            color: #f0f7ff;
-            font-size: 2.4rem;
-            width: 80px;
-            height: 80px;
-            border-radius: 30px 10px 30px 10px;
-            margin-bottom: 1.2rem;
-            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
-            transition: 0.3s;
-        }
+    .header .subhead {
+      margin-top: 0.4rem;
+      font-size: 1.1rem;
+      font-weight: 400;
+      color: #5f4b36;
+      background: rgba(190, 165, 140, 0.15);
+      display: inline-block;
+      padding: 0.3rem 1.2rem 0.4rem 1.2rem;
+      border-radius: 40px;
+      backdrop-filter: blur(2px);
+      border: 1px solid rgba(190, 165, 140, 0.2);
+    }
 
-        .profile-card:hover .icon-ornament {
-            transform: rotate(4deg) scale(1.02);
-            background: linear-gradient(145deg, #1f334d, #0f1f33);
-        }
+    .header .subhead i {
+      font-style: normal;
+      display: inline-block;
+      margin: 0 0.2rem;
+    }
 
-        .badge-nama {
-            display: inline-block;
-            background: rgba(30, 50, 80, 0.08);
-            backdrop-filter: blur(4px);
-            padding: 0.3rem 1.8rem;
-            border-radius: 40px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            letter-spacing: 1.5px;
-            color: #1a2a40;
-            border: 1px solid rgba(255,255,255,0.6);
-            margin-bottom: 0.8rem;
-        }
+    .header .subhead .date-place {
+      font-weight: 500;
+      color: #3d2c1b;
+    }
 
-        h1 {
-            font-size: 3.8rem;
-            font-weight: 700;
-            letter-spacing: -0.02em;
-            color: #0b1a2e;
-            margin: 0.2rem 0 0.4rem;
-            line-height: 1.1;
-        }
+    /* biodata — bersih, tanpa ikon/link */
+    .biodata {
+      margin: 2.2rem 0 2.8rem 0;
+      padding: 0.2rem 0;
+    }
 
-        .nama-highlight {
-            background: linear-gradient(135deg, #1f3a5e, #0f2a4a);
-            background-clip: text;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            display: inline-block;
-        }
+    .biodata-item {
+      display: flex;
+      align-items: baseline;
+      padding: 0.65rem 0;
+      border-bottom: 1px dashed #dacfc3;
+    }
 
-        .sub-judul {
-            font-size: 1.4rem;
-            font-weight: 400;
-            color: #1d334c;
-            background: rgba(255, 255, 255, 0.6);
-            backdrop-filter: blur(4px);
-            display: inline-block;
-            padding: 0.4rem 2.2rem;
-            border-radius: 60px;
-            margin: 0.2rem 0 1.5rem;
-            border: 1px solid rgba(255,255,255,0.7);
-            box-shadow: 0 2px 8px rgba(0,0,0,0.02);
-        }
+    .biodata-item:last-of-type {
+      border-bottom: none;
+    }
 
-        .sub-judul i {
-            margin-right: 10px;
-            color: #2c4a6e;
-            -webkit-text-fill-color: #2c4a6e;
-        }
+    .biodata-label {
+      font-size: 1rem;
+      font-weight: 500;
+      color: #6b5a48;
+      min-width: 100px;
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+      font-size: 0.85rem;
+      opacity: 0.8;
+    }
 
-        .profesi-badge {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 14px;
-            flex-wrap: wrap;
-            margin: 1.8rem 0 2rem;
-        }
+    .biodata-value {
+      font-size: 1.5rem;
+      font-weight: 500;
+      color: #2c1f13;
+      line-height: 1.4;
+      word-break: break-word;
+    }
 
-        .chip {
-            background: rgba(255, 255, 255, 0.7);
-            backdrop-filter: blur(4px);
-            padding: 0.6rem 1.8rem;
-            border-radius: 60px;
-            font-size: 1rem;
-            font-weight: 500;
-            color: #0b1a2e;
-            border: 1px solid rgba(255,255,255,0.9);
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.02);
-            letter-spacing: 0.3px;
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-        }
+    .biodata-value .sekolah {
+      font-weight: 400;
+      color: #4d3a28;
+      background: #ede5db;
+      padding: 0.1rem 0.8rem;
+      border-radius: 30px;
+      font-size: 1.1rem;
+      display: inline-block;
+      margin-left: 0.3rem;
+    }
 
-        .chip i {
-            color: #2a4b74;
-            font-size: 1.2rem;
-        }
+    /* tombol next – clean, tanpa ikon */
+    .next-wrapper {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 1rem;
+      border-top: 1px solid rgba(180, 160, 140, 0.25);
+      padding-top: 2rem;
+    }
 
-        .divider-custom {
-            width: 100px;
-            height: 4px;
-            background: linear-gradient(90deg, #1f3a5e, #7f9fc7, #1f3a5e);
-            margin: 1.2rem auto 1.8rem;
-            border-radius: 8px;
-            opacity: 0.5;
-        }
+    .btn-next {
+      display: inline-block;
+      background: #3e2e20;
+      color: #fcf6ed;
+      font-size: 1.3rem;
+      font-weight: 500;
+      padding: 0.8rem 2.8rem;
+      border-radius: 60px;
+      text-decoration: none;
+      letter-spacing: 0.02em;
+      box-shadow: 0 8px 16px -6px rgba(50, 35, 25, 0.25);
+      transition: 0.2s ease;
+      border: 1px solid rgba(255, 235, 210, 0.2);
+      backdrop-filter: blur(2px);
+      background: #3e2e20;
+      cursor: pointer;
+      text-align: center;
+    }
 
-        .quote-fisika {
-            font-size: 1.1rem;
-            font-weight: 300;
-            color: #1c314b;
-            background: rgba(255, 255, 255, 0.4);
-            padding: 0.8rem 1.8rem;
-            border-radius: 80px;
-            backdrop-filter: blur(4px);
-            display: inline-block;
-            border: 1px solid rgba(255,255,255,0.3);
-            margin-bottom: 0.5rem;
-            font-style: italic;
-        }
+    .btn-next:hover {
+      background: #2f2116;
+      transform: scale(1.02);
+      box-shadow: 0 12px 24px -10px rgba(40, 28, 18, 0.35);
+      border-color: #b7a085;
+      color: #ffffff;
+    }
 
-        .quote-fisika i {
-            color: #2a4b74;
-            margin: 0 6px;
-        }
+    .btn-next:active {
+      transform: scale(0.97);
+      box-shadow: 0 4px 12px -4px rgba(0, 0, 0, 0.3);
+    }
 
-        .social-mini {
-            margin-top: 2rem;
-            display: flex;
-            justify-content: center;
-            gap: 1.8rem;
-            flex-wrap: wrap;
-        }
+    /* fine-tuning untuk mobile */
+    @media (max-width: 550px) {
+      .card {
+        padding: 1.8rem 1.5rem 2rem;
+        border-radius: 2rem;
+      }
+      .header h1 {
+        font-size: 2rem;
+      }
+      .header .subhead {
+        font-size: 0.95rem;
+        padding: 0.2rem 1rem;
+        margin-top: 0.5rem;
+      }
+      .biodata-item {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 0.8rem 0;
+      }
+      .biodata-label {
+        min-width: auto;
+        font-size: 0.75rem;
+        margin-bottom: 0.1rem;
+        letter-spacing: 0.06em;
+      }
+      .biodata-value {
+        font-size: 1.3rem;
+      }
+      .biodata-value .sekolah {
+        font-size: 1rem;
+        margin-left: 0;
+        margin-top: 0.2rem;
+      }
+      .next-wrapper {
+        justify-content: center;
+        padding-top: 1.5rem;
+      }
+      .btn-next {
+        width: 100%;
+        text-align: center;
+        padding: 0.8rem 0;
+        font-size: 1.2rem;
+      }
+    }
 
-        .social-mini a {
-            color: #1f3a5e;
-            background: rgba(255, 255, 255, 0.5);
-            backdrop-filter: blur(4px);
-            width: 48px;
-            height: 48px;
-            border-radius: 30px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            text-decoration: none;
-            font-size: 1.5rem;
-            transition: all 0.2s ease;
-            border: 1px solid rgba(255,255,255,0.5);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.02);
-        }
+    @media (max-width: 400px) {
+      .header h1 {
+        font-size: 1.6rem;
+      }
+      .biodata-value {
+        font-size: 1.1rem;
+      }
+    }
 
-        .social-mini a:hover {
-            background: #1f3a5e;
-            color: white;
-            transform: scale(1.05) translateY(-3px);
-            border-color: #1f3a5e;
-            box-shadow: 0 10px 20px rgba(20, 50, 80, 0.2);
-        }
-
-        .footer-note {
-            margin-top: 2.2rem;
-            font-size: 0.9rem;
-            color: #2f4a6a;
-            opacity: 0.7;
-            font-weight: 300;
-            letter-spacing: 0.5px;
-            border-top: 1px solid rgba(255,255,255,0.4);
-            padding-top: 1.2rem;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .footer-note i {
-            font-size: 1rem;
-            color: #2a4b74;
-        }
-
-        /* Video Card */
-        .video-card {
-            background: rgba(255, 255, 255, 0.75);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border-radius: 3rem 3rem 3rem 3rem;
-            box-shadow: 0 30px 60px rgba(0, 20, 40, 0.20), 0 10px 25px rgba(0, 0, 0, 0.05);
-            padding: 1.8rem 1.8rem 2rem;
-            border: 1px solid rgba(255, 255, 255, 0.5);
-            transition: transform 0.25s ease, box-shadow 0.3s ease;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .video-card:hover {
-            transform: translateY(-6px);
-            box-shadow: 0 40px 70px rgba(0, 30, 60, 0.25);
-        }
-
-        .video-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1.2rem;
-            padding: 0 0.5rem;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-
-        .video-header h2 {
-            font-size: 1.2rem;
-            font-weight: 600;
-            color: #0b1a2e;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .video-header h2 i {
-            color: #e74c3c;
-            font-size: 0.9rem;
-            animation: pulse-dot 1.5s infinite;
-        }
-
-        @keyframes pulse-dot {
-            0%, 100% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.3; transform: scale(0.8); }
-        }
-
-        .zoom-controls {
-            display: flex;
-            gap: 8px;
-            align-items: center;
-        }
-
-        .zoom-btn {
-            background: rgba(31, 58, 94, 0.1);
-            border: 1px solid rgba(31, 58, 94, 0.2);
-            color: #1f3a5e;
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            font-size: 1rem;
-            font-weight: 700;
-        }
-
-        .zoom-btn:hover {
-            background: #1f3a5e;
-            color: white;
-            border-color: #1f3a5e;
-            transform: scale(1.05);
-        }
-
-        .zoom-level {
-            font-size: 0.8rem;
-            font-weight: 600;
-            color: #1f3a5e;
-            min-width: 40px;
-            text-align: center;
-        }
-
-        .video-wrapper {
-            position: relative;
-            border-radius: 24px;
-            overflow: hidden;
-            background: #0b1a2e;
-            box-shadow: inset 0 0 30px rgba(0,0,0,0.3), 0 8px 24px rgba(0,0,0,0.15);
-            flex: 1;
-            min-height: 350px;
-        }
-
-        .video-wrapper::before {
-            content: '';
-            position: absolute;
-            inset: -3px;
-            border-radius: 26px;
-            padding: 3px;
-            background: linear-gradient(135deg, #1f3a5e, #7f9fc7, #1f3a5e, #2a4b74);
-            background-size: 300% 300%;
-            animation: border-glow 4s ease-in-out infinite;
-            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-            -webkit-mask-composite: xor;
-            mask-composite: exclude;
-            pointer-events: none;
-            z-index: 2;
-        }
-
-        @keyframes border-glow {
-            0%, 100% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-        }
-
-        .video-wrapper::after {
-            content: '📹 LIVE';
-            position: absolute;
-            top: 16px;
-            left: 16px;
-            background: rgba(231, 76, 60, 0.9);
-            color: white;
-            padding: 4px 14px;
-            border-radius: 20px;
-            font-size: 0.7rem;
-            font-weight: 700;
-            letter-spacing: 1px;
-            z-index: 3;
-            backdrop-filter: blur(4px);
-            box-shadow: 0 4px 12px rgba(231, 76, 60, 0.3);
-        }
-
-        /* Menggunakan iframe untuk menghindari CORS dan Mixed Content */
-        .video-wrapper iframe {
-            width: 100%;
-            height: 100%;
-            border: none;
-            display: block;
-            position: relative;
-            z-index: 1;
-            background: #0b1a2e;
-            transition: transform 0.3s ease;
-        }
-
-        .video-wrapper iframe.zoomed {
-            transform: scale(var(--zoom-level, 1));
-        }
-
-        .video-placeholder {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100%;
-            color: white;
-            padding: 2rem;
-            text-align: center;
-            gap: 16px;
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            z-index: 0;
-            background: #0b1a2e;
-        }
-
-        .video-placeholder i {
-            font-size: 4rem;
-            opacity: 0.6;
-        }
-
-        .video-placeholder p {
-            opacity: 0.8;
-            font-size: 0.95rem;
-            max-width: 300px;
-        }
-
-        .video-placeholder .retry-btn {
-            background: rgba(255,255,255,0.15);
-            border: 1px solid rgba(255,255,255,0.3);
-            color: white;
-            padding: 8px 24px;
-            border-radius: 30px;
-            cursor: pointer;
-            font-size: 0.9rem;
-            transition: all 0.2s;
-        }
-
-        .video-placeholder .retry-btn:hover {
-            background: rgba(255,255,255,0.25);
-            transform: scale(1.05);
-        }
-
-        .corner-decor {
-            position: absolute;
-            width: 40px;
-            height: 40px;
-            border: 3px solid rgba(255, 255, 255, 0.2);
-            pointer-events: none;
-            z-index: 4;
-        }
-
-        .corner-decor.tl { top: 10px; left: 10px; border-right: none; border-bottom: none; border-radius: 8px 0 0 0; }
-        .corner-decor.tr { top: 10px; right: 10px; border-left: none; border-bottom: none; border-radius: 0 8px 0 0; }
-        .corner-decor.bl { bottom: 10px; left: 10px; border-right: none; border-top: none; border-radius: 0 0 0 8px; }
-        .corner-decor.br { bottom: 10px; right: 10px; border-left: none; border-top: none; border-radius: 0 0 8px 0; }
-
-        .video-status {
-            margin-top: 1rem;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 12px;
-            font-size: 0.85rem;
-            color: #2f4a6a;
-            flex-wrap: wrap;
-        }
-
-        .status-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: #2ecc71;
-            display: inline-block;
-            animation: pulse-dot 2s infinite;
-        }
-
-        .status-dot.inactive {
-            background: #e74c3c;
-            animation: none;
-        }
-
-        .status-dot.warning {
-            background: #f39c12;
-            animation: pulse-dot 1s infinite;
-        }
-
-        /* Responsif */
-        @media (max-width: 1024px) {
-            .main-wrapper {
-                grid-template-columns: 1fr;
-                gap: 1.5rem;
-            }
-            .video-wrapper {
-                min-height: 280px;
-            }
-        }
-
-        @media (max-width: 600px) {
-            .profile-card {
-                padding: 2rem 1.5rem;
-                border-radius: 2.5rem;
-            }
-            h1 {
-                font-size: 2.8rem;
-            }
-            .sub-judul {
-                font-size: 1.1rem;
-                padding: 0.3rem 1.5rem;
-            }
-            .icon-ornament {
-                width: 70px;
-                height: 70px;
-                font-size: 2rem;
-            }
-            .chip {
-                font-size: 0.9rem;
-                padding: 0.4rem 1.2rem;
-            }
-            .video-card {
-                padding: 1.2rem;
-                border-radius: 2.5rem;
-            }
-            .video-wrapper {
-                min-height: 200px;
-            }
-        }
-
-        @media (max-width: 450px) {
-            h1 {
-                font-size: 2.2rem;
-            }
-            .sub-judul {
-                font-size: 0.95rem;
-                padding: 0.2rem 1rem;
-            }
-            .profile-card {
-                padding: 1.5rem 1rem;
-            }
-            .video-wrapper {
-                min-height: 180px;
-            }
-        }
-    </style>
+    /* sentuhan halus */
+    .highlight {
+      background: linear-gradient(120deg, #dacfc3 0%, #dacfc3 40%, transparent 80%);
+      padding: 0 0.2rem;
+    }
+  </style>
 </head>
 <body>
-    <div class="main-wrapper">
-        <!-- Kartu Kiri: Profil -->
-        <div class="profile-card">
-            <div class="icon-ornament">
-                <i class="fas fa-atom"></i>
-            </div>
-
-            <div class="badge-nama">
-                <i class="fas fa-user-astronaut" style="margin-right: 8px;"></i> perkenalan
-            </div>
-
-            <h1>
-                <span class="nama-highlight">Stefanus Setiawan</span>
-            </h1>
-
-            <div class="sub-judul">
-                <i class="fas fa-chalkboard-teacher"></i> Guru Fisika · Santa Laurensia
-            </div>
-
-            <div class="divider-custom"></div>
-
-            <div class="profesi-badge">
-                <span class="chip">
-                    <i class="fas fa-flask"></i> Fisika
-                </span>
-                <span class="chip">
-                    <i class="fas fa-school"></i> SMA Santa Laurensia
-                </span>
-                <span class="chip">
-                    <i class="fas fa-graduation-cap"></i> Pendidik
-                </span>
-            </div>
-
-            <div class="quote-fisika">
-                <i class="fas fa-quote-left"></i> 
-                “Mengajarkan fisika adalah membuka tabir alam semesta”
-                <i class="fas fa-quote-right"></i>
-            </div>
-
-            <div class="social-mini">
-                <a href="#" aria-label="email"><i class="fas fa-envelope"></i></a>
-                <a href="#" aria-label="instagram"><i class="fab fa-instagram"></i></a>
-                <a href="#" aria-label="linkedin"><i class="fab fa-linkedin-in"></i></a>
-                <a href="#" aria-label="whatsapp"><i class="fab fa-whatsapp"></i></a>
-            </div>
-
-            <div class="footer-note">
-                <i class="fas fa-arrow-right"></i> 
-                <span>Santa Laurensia · 2026</span>
-                <i class="fas fa-arrow-left"></i>
-            </div>
-        </div>
-
-        <!-- Kartu Kanan: Video Stream -->
-        <div class="video-card">
-            <div class="video-header">
-                <h2>
-                    <i class="fas fa-circle"></i>
-                    Live Stream
-                </h2>
-                <div class="zoom-controls">
-                    <button class="zoom-btn" id="zoomOut" title="Zoom Out (Ctrl-)">−</button>
-                    <span class="zoom-level" id="zoomLevel">1.0×</span>
-                    <button class="zoom-btn" id="zoomIn" title="Zoom In (Ctrl+)">+</button>
-                    <button class="zoom-btn" id="zoomReset" title="Reset Zoom (Ctrl+0)" style="font-size:0.8rem;">⟲</button>
-                </div>
-            </div>
-
-            <div class="video-wrapper" id="videoWrapper">
-                <!-- Menggunakan iframe untuk menghindari CORS dan Mixed Content -->
-                <iframe 
-                    id="videoIframe"
-                    src="http://10.101.209.88" 
-                    allow="autoplay; encrypted-media"
-                    allowfullscreen>
-                </iframe>
-                
-                <!-- Placeholder yang muncul jika iframe gagal -->
-                <div class="video-placeholder" id="videoPlaceholder" style="display: none;">
-                    <i class="fas fa-video-slash"></i>
-                    <p id="errorMessage">Tidak dapat terhubung ke stream video.<br>Pastikan perangkat terhubung ke jaringan yang sama.</p>
-                    <button class="retry-btn" id="retryBtn">
-                        <i class="fas fa-sync-alt"></i> Coba Lagi
-                    </button>
-                    <p style="font-size: 0.7rem; opacity: 0.5; margin-top: 8px;">
-                        <i class="fas fa-info-circle"></i> Alamat: 10.101.209.88
-                    </p>
-                </div>
-
-                <!-- Hiasan sudut -->
-                <div class="corner-decor tl"></div>
-                <div class="corner-decor tr"></div>
-                <div class="corner-decor bl"></div>
-                <div class="corner-decor br"></div>
-            </div>
-
-            <div class="video-status">
-                <span class="status-dot" id="statusDot"></span>
-                <span id="statusText">Menghubungkan ke stream...</span>
-                <span style="opacity:0.5;">|</span>
-                <span style="font-size:0.75rem; opacity:0.6;">
-                    <i class="fas fa-network-wired"></i> 10.101.209.88
-                </span>
-                <button id="reloadBtn" style="background: none; border: none; color: #2a4b74; cursor: pointer; font-size: 0.75rem; opacity: 0.5; text-decoration: underline;">
-                    <i class="fas fa-redo"></i> reload
-                </button>
-            </div>
-        </div>
+  <div class="card">
+    <!-- header : tema PGF 2026, tanggal, tempat -->
+    <div class="header">
+      <h1>⚛️ PGF 2026</h1>
+      <div class="subhead">
+        <span class="date-place">22 – 24 Juli 2026</span>
+        <span style="margin:0 0.4rem; opacity:0.4;">·</span>
+        <span class="date-place">UNPAR</span>
+        <span style="margin:0 0.4rem; opacity:0.3;">—</span>
+        <span style="font-weight:300; letter-spacing:0.01em;">Pelatihan Guru Fisika</span>
+      </div>
     </div>
 
-    <script>
-        (function() {
-            const iframe = document.getElementById('videoIframe');
-            const statusDot = document.getElementById('statusDot');
-            const statusText = document.getElementById('statusText');
-            const placeholder = document.getElementById('videoPlaceholder');
-            const errorMessage = document.getElementById('errorMessage');
-            const retryBtn = document.getElementById('retryBtn');
-            const reloadBtn = document.getElementById('reloadBtn');
+    <!-- biodata lengkap: Stefanus Setiawan, guru fisika, SMA Santa Laurensia -->
+    <div class="biodata">
+      <div class="biodata-item">
+        <span class="biodata-label">Nama</span>
+        <span class="biodata-value">Stefanus Setiawan</span>
+      </div>
+      <div class="biodata-item">
+        <span class="biodata-label">Profesi</span>
+        <span class="biodata-value">Guru Fisika</span>
+      </div>
+      <div class="biodata-item">
+        <span class="biodata-label">Sekolah</span>
+        <span class="biodata-value">
+          SMA Santa Laurensia
+          <span class="sekolah">🖋️</span>
+        </span>
+      </div>
+    </div>
 
-            let zoomLevel = 1.0;
-            const MIN_ZOOM = 0.5;
-            const MAX_ZOOM = 2.5;
-            const ZOOM_STEP = 0.1;
-            let loadAttempts = 0;
-            const MAX_ATTEMPTS = 3;
-
-            // --- Zoom Control ---
-            const zoomInBtn = document.getElementById('zoomIn');
-            const zoomOutBtn = document.getElementById('zoomOut');
-            const zoomResetBtn = document.getElementById('zoomReset');
-            const zoomLevelDisplay = document.getElementById('zoomLevel');
-
-            function applyZoom(zoom) {
-                zoomLevel = Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, zoom));
-                iframe.style.setProperty('--zoom-level', zoomLevel);
-                iframe.classList.add('zoomed');
-                zoomLevelDisplay.textContent = zoomLevel.toFixed(1) + '×';
-            }
-
-            zoomInBtn.addEventListener('click', () => applyZoom(zoomLevel + ZOOM_STEP));
-            zoomOutBtn.addEventListener('click', () => applyZoom(zoomLevel - ZOOM_STEP));
-            zoomResetBtn.addEventListener('click', () => applyZoom(1.0));
-
-            document.addEventListener('keydown', (e) => {
-                if (e.ctrlKey && (e.key === '=' || e.key === '+')) {
-                    e.preventDefault();
-                    applyZoom(zoomLevel + ZOOM_STEP);
-                } else if (e.ctrlKey && e.key === '-') {
-                    e.preventDefault();
-                    applyZoom(zoomLevel - ZOOM_STEP);
-                } else if (e.ctrlKey && e.key === '0') {
-                    e.preventDefault();
-                    applyZoom(1.0);
-                }
-            });
-
-            applyZoom(1.0);
-
-            // --- Status Management ---
-            function setStatus(state, message) {
-                statusDot.className = 'status-dot';
-                if (state === 'connected') {
-                    statusDot.classList.remove('inactive', 'warning');
-                    statusText.textContent = message || 'Stream aktif';
-                    placeholder.style.display = 'none';
-                    iframe.style.display = 'block';
-                } else if (state === 'warning') {
-                    statusDot.classList.add('warning');
-                    statusDot.classList.remove('inactive');
-                    statusText.textContent = message || 'Menghubungkan...';
-                } else {
-                    statusDot.classList.add('inactive');
-                    statusDot.classList.remove('warning');
-                    statusText.textContent = message || 'Tidak terhubung';
-                }
-            }
-
-            function showError(message) {
-                placeholder.style.display = 'flex';
-                iframe.style.display = 'none';
-                errorMessage.textContent = message || 'Tidak dapat terhubung ke stream video.';
-                setStatus('error', 'Gagal terhubung');
-            }
-
-            function hideError() {
-                placeholder.style.display = 'none';
-                iframe.style.display = 'block';
-            }
-
-            function loadStream() {
-                hideError();
-                setStatus('warning', 'Memuat stream...');
-                
-                // Reset iframe src untuk memuat ulang
-                const currentSrc = iframe.src;
-                iframe.src = 'about:blank';
-                setTimeout(() => {
-                    iframe.src = currentSrc;
-                }, 100);
-
-                // Timeout untuk deteksi kegagalan
-                const loadTimeout = setTimeout(() => {
-                    // Cek apakah iframe berhasil dimuat dengan mencoba akses
-                    try {
-                        // Jika iframe dari domain berbeda, kita tidak bisa akses kontennya
-                        // Tapi kita bisa cek apakah ada error dengan mendeteksi placeholder
-                        if (placeholder.style.display !== 'flex') {
-                            setStatus('connected', 'Stream aktif');
-                        }
-                    } catch (e) {
-                        // Jika terjadi error, anggap stream berhasil karena tidak bisa diakses
-                        setStatus('connected', 'Stream aktif');
-                    }
-                }, 5000);
-
-                // Event listener untuk iframe load
-                iframe.addEventListener('load', function onLoad() {
-                    clearTimeout(loadTimeout);
-                    setStatus('connected', 'Stream aktif');
-                    iframe.removeEventListener('load', onLoad);
-                });
-
-                // Jika setelah 8 detik masih belum connected, tampilkan error
-                setTimeout(() => {
-                    if (statusText.textContent !== 'Stream aktif' && statusText.textContent !== 'Stream aktif') {
-                        if (loadAttempts < MAX_ATTEMPTS) {
-                            loadAttempts++;
-                            setStatus('warning', `Mencoba ulang (${loadAttempts}/${MAX_ATTEMPTS})...`);
-                            setTimeout(() => {
-                                loadStream();
-                            }, 2000);
-                        } else {
-                            showError('Stream tidak merespons. Pastikan:\n• Perangkat terhubung ke jaringan yang sama\n• Server stream aktif di 10.101.209.88');
-                        }
-                    }
-                }, 8000);
-            }
-
-            // --- Retry Button ---
-            retryBtn.addEventListener('click', () => {
-                loadAttempts = 0;
-                loadStream();
-            });
-
-            reloadBtn.addEventListener('click', () => {
-                loadAttempts = 0;
-                loadStream();
-            });
-
-            // --- Handle iframe error (jika bisa dideteksi) ---
-            // Karena iframe tidak bisa mendeteksi error secara langsung,
-            // kita gunakan pendekatan timeout
-
-            // --- Initial Load ---
-            setStatus('warning', 'Menghubungkan ke stream...');
-            
-            // Mulai load setelah 500ms
-            setTimeout(() => {
-                loadStream();
-            }, 500);
-
-            // Fallback: coba lagi jika setelah 12 detik masih tidak ada progress
-            setTimeout(() => {
-                if (statusText.textContent !== 'Stream aktif') {
-                    if (loadAttempts < MAX_ATTEMPTS) {
-                        loadAttempts++;
-                        loadStream();
-                    } else {
-                        showError('Stream tidak merespons. Pastikan:\n• Perangkat terhubung ke jaringan yang sama\n• Server stream aktif di 10.101.209.88');
-                    }
-                }
-            }, 12000);
-
-            console.log('🎥 Video Stream dengan iframe dan zoom siap');
-            console.log('📡 Alamat stream: http://10.101.209.88');
-        })();
-    </script>
+    <!-- tombol next menuju halaman simulasi (tanpa embel-embel link lain) -->
+    <div class="next-wrapper">
+      <a href="https://stefanussetiawan1592-dev.github.io/pgf2026/simulasi" class="btn-next">
+        Next →
+      </a>
+    </div>
+  </div>
 </body>
 </html>
